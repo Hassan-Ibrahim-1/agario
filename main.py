@@ -7,6 +7,11 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
+import random
+
+mylist = ["red", "green", "blue", "yellow", "purple", "orange", "brown", "pink", "cyan"]
+random_colour = random.choice(mylist)
+
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
 while running:
@@ -17,9 +22,9 @@ while running:
             running = False
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("blue")
+    screen.fill("white")
 
-    pygame.draw.circle(screen, "red", player_pos, 40)
+    pygame.draw.circle(screen, random_colour, player_pos, 40)
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
