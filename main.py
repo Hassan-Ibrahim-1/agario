@@ -12,6 +12,9 @@ import random
 mylist = ["red", "green", "blue", "yellow", "purple", "orange", "brown", "pink", "cyan"]
 random_colour = random.choice(mylist)
 
+font = pygame.font.SysFont(None, 24)
+img = font.render('hello', True, "blue")
+
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
 while running:
@@ -25,6 +28,7 @@ while running:
     screen.fill("white")
 
     pygame.draw.circle(screen, random_colour, player_pos, 40)
+    screen.blit(img, pygame.Vector2(player_pos.x - img.get_width() / 2, player_pos.y - img.get_height() / 2))
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
@@ -35,6 +39,8 @@ while running:
         player_pos.x -= 300 * dt
     if keys[pygame.K_d]:
         player_pos.x += 300 * dt
+    if keys[pygame.K_ESCAPE]:
+        running = False
 
     # flip() the display to put your work on screen
     pygame.display.flip()
@@ -45,4 +51,3 @@ while running:
     dt = clock.tick(60) / 1000
 
 pygame.quit()
-
