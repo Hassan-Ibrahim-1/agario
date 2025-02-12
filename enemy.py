@@ -11,11 +11,8 @@ class Enemy:
         pygame.draw.circle(screen, self.color, self.position, 40)
 
     def update(self, player_pos: Vector2, dt: float):
-
         dir = player_pos - self.position
         v = dir.normalize() * self.velocity * dt
-        # v.x *= dt
-        # v.y *= dt
         self.position += v
 
 
