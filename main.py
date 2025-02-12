@@ -1,16 +1,20 @@
 import pygame
+from pygame import Vector2
+from enemy import Enemy
 
 # pygame setup
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 running = True
 dt = 0
 
 import random
 
-mylist = ["red", "green", "blue", "yellow", "purple", "orange", "brown", "pink", "cyan"]
-random_colour = random.choice(mylist)
+colors = ["red", "green", "blue", "yellow", "purple", "orange", "brown", "pink", "cyan"]
+random_colour = random.choice(colors)
 
 font = pygame.font.SysFont(None, 24)
 img = font.render('hello', True, "blue")
@@ -20,6 +24,12 @@ player_speed = pygame.Vector2(0, 0)
 
 ACCELERATION = 500
 MAX_SPEED = 200
+
+enemies = []
+for x in range(10):
+    xpos = random.randint(0, SCREEN_WIDTH)
+    ypos = random.randint(0, SCREEN_HEIGHT)
+    enemies.append(Enemy(Vector2(xpos, ypos), random.choice(colors)))
 
 while running:
 	# limits FPS to 60
@@ -33,12 +43,17 @@ while running:
 		if event.type == pygame.QUIT:
 			running = False
 
+
 	# fill the screen with a color to wipe away anything from last frame
 	screen.fill("white")
 
 	pygame.draw.circle(screen, random_colour, player_pos, 40)
 	screen.blit(img, pygame.Vector2(player_pos.x - img.get_width() / 2, player_pos.y - img.get_height() / 2))
+	print(player_pos)
 
+	for enemy in enemies:
+		enemy.render(screen)
+		enemy.update(player_pos, dt)
 
 
 	moving = False
