@@ -19,17 +19,32 @@ random_colour = random.choice(colors)
 font = pygame.font.SysFont(None, 24)
 img = font.render('hello', True, "blue")
 
+# Constants
+WORLD_WIDTH, WORLD_HEIGHT = 6000, 6000  # Large world size
+FOOD_RADIUS = 5
+FOOD_COLOR = (0, 255, 0)  # Green food
+FOOD_COUNT = 100  # Number of food particles
+PLAYER_SPEED = 300  # Pixels per second
+STARTING_SIZE = 40  # Initial player size
+
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 player_speed = pygame.Vector2(0, 0)
+player_size = STARTING_SIZE
+food_particles = [(random.randint(0, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT)) for _ in range(FOOD_COUNT)]
 
 ACCELERATION = 500
 MAX_SPEED = 200
 
 enemies = []
 for x in range(10):
-    xpos = random.randint(0, SCREEN_WIDTH)
-    ypos = random.randint(0, SCREEN_HEIGHT)
-    enemies.append(Enemy(Vector2(xpos, ypos), random.choice(colors)))
+	xpos = random.randint(0, SCREEN_WIDTH)
+	ypos = random.randint(0, SCREEN_HEIGHT)
+	enemies.append(Enemy(Vector2(xpos, ypos), random.choice(colors)))
+
+
+def spawn_food():
+	# Spawns a new food particle at a random location.
+	return (random.randint(0, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT))
 
 while running:
 	# limits FPS to 60
@@ -47,9 +62,26 @@ while running:
 	# fill the screen with a color to wipe away anything from last frame
 	screen.fill("white")
 
+	# raw food (world space, stays in place)
+	for food in food_particles:
+		food_screen_pos = food - player_pos + pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+		pygame.draw.circle(screen, FOOD_COLOR, (int(food_screen_pos.x), int(food_screen_pos.y)), FOOD_RADIUS)
+
 	pygame.draw.circle(screen, random_colour, player_pos, 40)
 	screen.blit(img, pygame.Vector2(player_pos.x - img.get_width() / 2, player_pos.y - img.get_height() / 2))
 	print(player_pos)
+
+	# Check for food collision
+	new_food_particles = []
+	for food in food_particles:
+		distance = (player_pos - pygame.Vector2(food)).length()
+		if distance < player_size:  # Collision detected
+			player_size += 1  # Grow the player
+			new_food_particles.append(spawn_food())  # Respawn food
+		else:
+			new_food_particles.append(food)
+
+	food_particles = new_food_particles  # Update food list
 
 	for enemy in enemies:
 		enemy.render(screen)
