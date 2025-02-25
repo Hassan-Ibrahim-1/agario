@@ -1,3 +1,4 @@
+import random
 import pygame
 from pygame import Vector2, Color
 from enemy import Enemy
@@ -13,8 +14,6 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
 running = True
 dt = 0
-
-import random
 
 colors = [
     Color(255, 0, 0),      # red
@@ -32,9 +31,7 @@ font = pygame.font.SysFont(None, 24)
 img = font.render('hello', True, "blue")
 
 # Constants
-FOOD_RADIUS = 5
-FOOD_COLOR = Color(0, 255, 0)  # Green food
-FOOD_COUNT = 100  # Number of food particles
+FOOD_COUNT = 500  # Number of food particles
 
 player = Player(
     Vector2(
@@ -46,15 +43,16 @@ player = Player(
 
 food_particles: list[Food] = []
 
+def random_world_pos() -> Vector2:
+    return Vector2(random.randint(0, world.HEIGHT), random.randint(0, world.WIDTH))
+
+def spawn_food() -> Food:
+    # Spawns a new food particle at a random location.
+    return Food(random_world_pos(), random.randint(5, 20), random.choice(colors))
+
 for x in range(FOOD_COUNT):
     food_particles.append(
-        Food(
-            Vector2(
-                random.randint(0, world.WIDTH), random.randint(0, world.HEIGHT)
-            ),
-            5,
-            FOOD_COLOR
-        )
+        spawn_food()
     )
 
 enemies: list[Enemy] = [] 
@@ -63,10 +61,6 @@ for x in range(10):
     ypos = random.randint(0, SCREEN_HEIGHT)
     enemies.append(Enemy(Vector2(xpos, ypos), random.choice(colors)))
 
-
-def spawn_food():
-    # Spawns a new food particle at a random location.
-    return (random.randint(0, world.HEIGHT), random.randint(0, world.WIDTH))
 
 while running:
     # limits FPS to 60
@@ -87,10 +81,15 @@ while running:
     # raw food (world space, stays in place)
     for food in food_particles:
         food.render(screen, player.position)
-        # pygame.draw.circle(screen, FOOD_COLOR, (int(food_screen_pos.x), int(food_screen_pos.y)), FOOD_RADIUS)
 
     player.render(screen)
-    screen.blit(img, pygame.Vector2(player.position.x - img.get_width() / 2, player.position.y - img.get_height() / 2))
+    screen.blit(
+        img,
+        Vector2(
+            player.position.x - img.get_width() / 2,
+            player.position.y - img.get_height() / 2
+        )
+    )
 
 
     for enemy in enemies:
@@ -121,7 +120,6 @@ while running:
 
     food_particles = new_food_particles  # Update food list
 
-    # flip() the display to put your work on screen
     pygame.display.flip()
 
 pygame.quit()
