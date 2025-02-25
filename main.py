@@ -36,7 +36,7 @@ font = pygame.font.SysFont(None, 24)
 img = font.render('hello', True, "blue")
 
 # Constants
-FOOD_COUNT = 500  # Number of food particles
+FOOD_COUNT = 1000  # Number of food particles
 
 player = Player(
     Vector2(
