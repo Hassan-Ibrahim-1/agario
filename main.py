@@ -1,6 +1,6 @@
 import random
 import pygame
-from pygame import Vector2, Color
+from pygame import OPENGL, Vector2, Color
 import camera
 from enemy import Enemy
 from food import Food
@@ -11,7 +11,11 @@ import world
 pygame.init()
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen = pygame.display.set_mode(
+    (SCREEN_WIDTH, SCREEN_HEIGHT),
+    flags=pygame.SCALED,
+    vsync=1
+)
 clock = pygame.time.Clock()
 running = True
 dt = 0
