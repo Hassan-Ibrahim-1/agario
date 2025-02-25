@@ -41,3 +41,7 @@ class Player:
 
         return moving
 
+    def render(self, screen):
+        pygame.draw.circle(screen, self.color, self.position, 40)
+
+

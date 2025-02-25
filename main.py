@@ -1,7 +1,9 @@
 import pygame
 from pygame import Vector2, Color
 from enemy import Enemy
+from food import Food
 from player import Player
+import world
 
 # pygame setup
 pygame.init()
@@ -30,12 +32,9 @@ font = pygame.font.SysFont(None, 24)
 img = font.render('hello', True, "blue")
 
 # Constants
-WORLD_WIDTH, WORLD_HEIGHT = 6000, 6000  # Large world size
 FOOD_RADIUS = 5
-FOOD_COLOR = (0, 255, 0)  # Green food
+FOOD_COLOR = Color(0, 255, 0)  # Green food
 FOOD_COUNT = 100  # Number of food particles
-PLAYER_SPEED = 300  # Pixels per second
-STARTING_SIZE = 40  # Initial player size
 
 player = Player(
     Vector2(
@@ -45,7 +44,18 @@ player = Player(
     random.choice(colors)
 )
 
-food_particles = [(random.randint(0, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT)) for _ in range(FOOD_COUNT)]
+food_particles: list[Food] = []
+
+for x in range(FOOD_COUNT):
+    food_particles.append(
+        Food(
+            Vector2(
+                random.randint(0, world.WIDTH), random.randint(0, world.HEIGHT)
+            ),
+            5,
+            FOOD_COLOR
+        )
+    )
 
 enemies: list[Enemy] = [] 
 for x in range(10):
@@ -56,7 +66,7 @@ for x in range(10):
 
 def spawn_food():
     # Spawns a new food particle at a random location.
-    return (random.randint(0, WORLD_WIDTH), random.randint(0, WORLD_HEIGHT))
+    return (random.randint(0, world.HEIGHT), random.randint(0, world.WIDTH))
 
 while running:
     # limits FPS to 60
@@ -76,10 +86,10 @@ while running:
 
     # raw food (world space, stays in place)
     for food in food_particles:
-        food_screen_pos = food - player.position + pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-        pygame.draw.circle(screen, FOOD_COLOR, (int(food_screen_pos.x), int(food_screen_pos.y)), FOOD_RADIUS)
+        food.render(screen, player.position)
+        # pygame.draw.circle(screen, FOOD_COLOR, (int(food_screen_pos.x), int(food_screen_pos.y)), FOOD_RADIUS)
 
-    pygame.draw.circle(screen, player.color, player.position, 40)
+    player.render(screen)
     screen.blit(img, pygame.Vector2(player.position.x - img.get_width() / 2, player.position.y - img.get_height() / 2))
 
 
@@ -102,7 +112,7 @@ while running:
     # Check for food collision
     new_food_particles = []
     for food in food_particles:
-        distance = (player.position - pygame.Vector2(food)).length()
+        distance = (player.position - pygame.Vector2(food.position)).length()
         if distance < player.size:  # Collision detected
             player.size += 1  # Grow the player
             new_food_particles.append(spawn_food())  # Respawn food
