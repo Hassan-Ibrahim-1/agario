@@ -7,8 +7,11 @@ class Enemy:
         self.velocity: float = velocity
         self.color = color
 
-    def render(self, screen):
-        pygame.draw.circle(screen, self.color, self.position, 40)
+    def render(self, screen, player_pos: Vector2):
+        screen_pos = self.position - player_pos + Vector2(
+            screen.get_width() / 2, screen.get_height() / 2
+        )
+        pygame.draw.circle(screen, self.color, screen_pos, 40)
 
     def update(self, player_pos: Vector2, dt: float):
         dir = player_pos - self.position

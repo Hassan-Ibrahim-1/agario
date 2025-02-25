@@ -71,20 +71,9 @@ while running:
 	screen.blit(img, pygame.Vector2(player_pos.x - img.get_width() / 2, player_pos.y - img.get_height() / 2))
 	print(player_pos)
 
-	# Check for food collision
-	new_food_particles = []
-	for food in food_particles:
-		distance = (player_pos - pygame.Vector2(food)).length()
-		if distance < player_size:  # Collision detected
-			player_size += 1  # Grow the player
-			new_food_particles.append(spawn_food())  # Respawn food
-		else:
-			new_food_particles.append(food)
-
-	food_particles = new_food_particles  # Update food list
 
 	for enemy in enemies:
-		enemy.render(screen)
+		enemy.render(screen, player_pos)
 		enemy.update(player_pos, dt)
 
 
@@ -120,6 +109,18 @@ while running:
 
 	# d = v / t
 	player_pos += player_speed * dt
+
+	# Check for food collision
+	new_food_particles = []
+	for food in food_particles:
+		distance = (player_pos - pygame.Vector2(food)).length()
+		if distance < player_size:  # Collision detected
+			player_size += 1  # Grow the player
+			new_food_particles.append(spawn_food())  # Respawn food
+		else:
+			new_food_particles.append(food)
+
+	food_particles = new_food_particles  # Update food list
 
 	# flip() the display to put your work on screen
 	pygame.display.flip()
