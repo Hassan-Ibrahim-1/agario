@@ -1,16 +1,16 @@
 from pygame import Vector2, Color
 import pygame
 
+from camera import Camera
+
 class Enemy:
     def __init__(self, pos: Vector2, color: Color, velocity: float = 15) -> None:
         self.position = pos
         self.velocity: float = velocity
         self.color = color
 
-    def render(self, screen, player_pos: Vector2):
-        screen_pos = self.position - player_pos + Vector2(
-            screen.get_width() / 2, screen.get_height() / 2
-        )
+    def render(self, screen, camera: Camera):
+        screen_pos = camera.to_screen_pos(screen, self.position)
         pygame.draw.circle(screen, self.color, screen_pos, 40)
 
     def update(self, player_pos: Vector2, dt: float):

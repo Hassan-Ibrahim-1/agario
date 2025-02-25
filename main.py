@@ -1,6 +1,7 @@
 import random
 import pygame
 from pygame import Vector2, Color
+import camera
 from enemy import Enemy
 from food import Food
 from player import Player
@@ -83,17 +84,18 @@ while running:
         food.render(screen, player.position)
 
     player.render(screen)
+    img_pos = Vector2(
+        player.get_screen_pos(screen).x - img.get_width() / 2,
+        player.get_screen_pos(screen).y - img.get_height() / 2
+    )
     screen.blit(
         img,
-        Vector2(
-            player.position.x - img.get_width() / 2,
-            player.position.y - img.get_height() / 2
-        )
+        img_pos
     )
 
 
     for enemy in enemies:
-        enemy.render(screen, player.position)
+        enemy.render(screen, player.camera)
         enemy.update(player.position, dt)
 
     keys = pygame.key.get_pressed()

@@ -1,6 +1,8 @@
 import pygame
-from pygame import Color, Vector2
+from pygame import Color, Surface, Vector2
 from pygame.key import ScancodeWrapper
+
+from camera import Camera
 
 class Player:
     STARTING_SIZE = 40
@@ -12,6 +14,8 @@ class Player:
         self.size: int = self.STARTING_SIZE
         self.acceleration: int = 500
         self.color = color
+
+        self.camera = Camera(self.position)
 
     # returns if the player is moving or not
     def update(self, keys: ScancodeWrapper, dt: float) -> bool:
@@ -41,7 +45,14 @@ class Player:
 
         return moving
 
-    def render(self, screen):
-        pygame.draw.circle(screen, self.color, self.position, 40)
+    # only use this when rendering
+    # not for stuff like physics or pathfinding
+    def get_screen_pos(self, screen: Surface) -> Vector2:
+        self.camera.update_offset(screen)
+        return self.position - self.camera.offset
+
+    def render(self, screen: Surface):
+        print(f"screen pos: {self.get_screen_pos(screen)}")
+        pygame.draw.circle(screen, self.color, self.get_screen_pos(screen), 40)
 
 
