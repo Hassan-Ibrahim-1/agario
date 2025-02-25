@@ -1,8 +1,8 @@
-from pygame import Vector2
+from pygame import Vector2, Color
 import pygame
 
 class Enemy:
-    def __init__(self, pos: Vector2, color: str, velocity: float = 15) -> None:
+    def __init__(self, pos: Vector2, color: Color, velocity: float = 15) -> None:
         self.position = pos
         self.velocity: float = velocity
         self.color = color
