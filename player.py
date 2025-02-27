@@ -53,6 +53,6 @@ class Player:
 
     def render(self, screen: Surface):
         print(f"screen pos: {self.get_screen_pos(screen)}")
-        pygame.draw.circle(screen, self.color, self.get_screen_pos(screen), 40)
+        pygame.draw.circle(screen, self.color, self.get_screen_pos(screen), self.size)
 
 
