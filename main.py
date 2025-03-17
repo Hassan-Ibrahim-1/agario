@@ -1,4 +1,5 @@
 import random
+from warnings import simplefilter
 import pygame
 from pygame import Vector2, Color
 from enemy import Enemy
@@ -37,6 +38,7 @@ img = font.render('hello', True, "blue")
 
 # Constants
 FOOD_COUNT = 10500  # Number of food particles
+ENEMY_DAMAGE = 10
 
 player = Player(
     Vector2(
@@ -64,7 +66,7 @@ enemies: list[Enemy] = []
 for x in range(10):
     xpos = random.randint(0, SCREEN_WIDTH)
     ypos = random.randint(0, SCREEN_HEIGHT)
-    enemies.append(Enemy(Vector2(xpos, ypos), random.choice(colors)))
+    enemies.append(Enemy(Vector2(xpos, ypos), random.randint(20, 80), random.choice(colors)))
 
 def dist(p1,p2):
     x1 = p1[0]
@@ -106,10 +108,15 @@ while running:
     )
 
     for enemy in enemies:
-        if dist(enemy.position, player.position) + enemy.size <= player.size:
-            player.size += enemy.size **  0.5
-            enemies.remove(enemy)
-
+        d = dist(enemy.position, player.position)
+        if (d + enemy.size <= player.size
+            or d + player.size <= enemy.size):
+            if enemy.size < player.size:
+                player.size += enemy.size ** 0.5
+                enemies.remove(enemy)
+            else:
+                player.health -= ENEMY_DAMAGE
+                print("taking damage")
 
     for enemy in enemies:
         enemy.render(screen, player.camera)
@@ -138,6 +145,8 @@ while running:
             new_food_particles.append(food)
 
     food_particles = new_food_particles  # Update food list
+
+    player.render_bar(screen)
 
     pygame.display.flip()
 

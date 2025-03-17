@@ -4,11 +4,11 @@ import pygame
 from camera import Camera
 
 class Enemy:
-    def __init__(self, pos: Vector2, color: Color, velocity: float = 15) -> None:
+    def __init__(self, pos: Vector2, size:int, color: Color, velocity: float = 15) -> None:
         self.position = pos
         self.velocity: float = velocity
         self.color = color
-        self.size = 40
+        self.size = size
 
     def render(self, screen, camera: Camera):
         screen_pos = camera.to_screen_pos(screen, self.position)

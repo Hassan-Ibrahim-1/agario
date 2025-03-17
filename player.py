@@ -2,11 +2,13 @@ import pygame
 from pygame import Color, Surface, Vector2
 from pygame.key import ScancodeWrapper
 
+from bar import Bar
 from camera import Camera
 
 class Player:
     STARTING_SIZE = 40
     MAX_SPEED = 200
+    MAX_HEALTH = 100
 
     def __init__(self, pos: Vector2, color: Color) -> None:
         self.speed = Vector2(0, 0)
@@ -14,6 +16,8 @@ class Player:
         self.size: int = self.STARTING_SIZE
         self.acceleration: int = 500
         self.color = color
+        self.health = self.MAX_HEALTH
+        self.bar = Bar(Vector2(100, 100), Color(0, 0, 0), Color(255, 0, 0), 100, 20)
 
         self.camera = Camera(self.position)
 
@@ -52,7 +56,7 @@ class Player:
         return self.position - self.camera.offset
 
     def render(self, screen: Surface):
-        print(f"screen pos: {self.get_screen_pos(screen)}")
         pygame.draw.circle(screen, self.color, self.get_screen_pos(screen), self.size)
 
-
+    def render_bar(self, screen: Surface):
+        self.bar.render(screen, self.health / self.MAX_HEALTH)
