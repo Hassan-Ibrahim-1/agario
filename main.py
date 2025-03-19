@@ -5,6 +5,7 @@ from enemy import Enemy
 from food import Food
 from player import Player
 import world
+import math
 
 # pygame setup
 pygame.init()
@@ -65,6 +66,14 @@ for x in range(10):
     ypos = random.randint(0, SCREEN_HEIGHT)
     enemies.append(Enemy(Vector2(xpos, ypos), random.choice(colors)))
 
+def dist(p1,p2):
+    x1 = p1[0]
+    y1 = p1[1]
+    x2 = p2[0]
+    y2 = p2[1]
+    xd = x2 - x1
+    yd = y2 - y1
+    return (xd ** 2 + yd ** 2) ** 0.5
 
 while running:
     # limits FPS to 60
@@ -95,6 +104,11 @@ while running:
         img,
         img_pos
     )
+
+    for enemy in enemies:
+        if dist(enemy.position, player.position) + enemy.size <= player.size:
+            player.size += enemy.size **  0.5
+            enemies.remove(enemy)
 
 
     for enemy in enemies:
