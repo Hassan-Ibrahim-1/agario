@@ -32,7 +32,7 @@ colors = [
 ]
 
 font = pygame.font.SysFont(None, 24)
-img = font.render('hello', True, "blue")
+img = font.render('Hello World', True, "blue")
 
 # Constants
 FOOD_COUNT = 10500  # Number of food particles
