@@ -18,6 +18,7 @@ class Player:
         self.color = color
         self.health = self.MAX_HEALTH
         self.bar = Bar(Vector2(100, 100), Color(0, 0, 0), Color(255, 0, 0), 100, 20)
+        self.growth_rate = 1
 
         self.camera = Camera(self.position)
 
