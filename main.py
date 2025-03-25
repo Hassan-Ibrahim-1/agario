@@ -31,7 +31,7 @@ colors = [
 ]
 
 font = pygame.font.SysFont(None, 24)
-img = font.render('hello', True, "blue")
+img = font.render('Hello World', True, "blue")
 
 ENEMY_DAMAGE = 10
 
