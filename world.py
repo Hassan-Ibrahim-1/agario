@@ -99,9 +99,6 @@ class World:
     def update(self, screen):
         for chunk in self.get_render_chunks():
             chunk.update(screen)
-        # for chunk in self.chunks:
-        #     if chunk.contains_player():
-        #         chunk.update(screen)
 
     # get the chunk that the player is in and the 9 surrounding chunks
     # the first element is always the chunk that the player is currently in
