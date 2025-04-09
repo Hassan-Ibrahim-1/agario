@@ -60,7 +60,7 @@ for x in range(FOOD_COUNT):
         spawn_food()
     )
 
-enemies: list[Enemy] = [] 
+enemies: list[Enemy] = []
 for x in range(10):
     xpos = random.randint(0, SCREEN_WIDTH)
     ypos = random.randint(0, SCREEN_HEIGHT)
