@@ -51,11 +51,11 @@ class Chunk:
         for i, food in enumerate(self.food):
             distance = (self.player.position - Vector2(food.position)).length()
             if distance < self.player.size: 
-                self.player.size += self.player.growth_rate
+                self.player.size = (self.player.size**2 + food.radius**2)**0.5
                 food_to_remove.append(i)
                 continue
 
-            food.render(screen, self.player.position)
+            food.render(screen, self.player.camera)
 
         # go in reverse order to avoid skipping over elements
         for i in sorted(food_to_remove, reverse=True):
@@ -97,29 +97,31 @@ class World:
             chunk.spawn_food(100)
 
     def update(self, screen):
-        for chunk in self.get_render_chunks():
+        for chunk in self.get_render_chunks(screen):
             chunk.update(screen)
 
     # get the chunk that the player is in and the 9 surrounding chunks
     # the first element is always the chunk that the player is currently in
-    def get_render_chunks(self) -> list[Chunk]:
+    def get_render_chunks(self, screen) -> list[Chunk]:
         chunks = []
         for chunk in self.chunks:
             if chunk.contains_player():
                 chunks.append(chunk)
-                chunks += self.get_surrounding_chunks()
+                chunks += self.get_surrounding_chunks(screen)
                 break
 
         return chunks
     
-    def get_surrounding_chunks(self) -> list[Chunk]:
+    def get_surrounding_chunks(self, screen) -> list[Chunk]:
         chunk_x = int(self.player.position.x // Chunk.CHUNK_SIZE)
         chunk_y = int(self.player.position.y // Chunk.CHUNK_SIZE)
         
         surrounding_chunks = []
-        
-        for dx in [-1, 0, 1]:
-            for dy in [-1, 0, 1]:
+
+        chunks_horiz = int(screen.get_width() // (2*Chunk.CHUNK_SIZE*self.player.camera.zoom) + 2) 
+        chunks_vert = int(screen.get_height() // (2*Chunk.CHUNK_SIZE*self.player.camera.zoom) + 2)
+        for dx in range(-chunks_horiz+1, chunks_horiz):
+            for dy in range(-chunks_vert+1, chunks_vert):
                 neighbor_x = chunk_x + dx
                 neighbor_y = chunk_y + dy
 
@@ -136,6 +138,6 @@ class World:
     def render_chunk_outlines(self, screen, player: Player):
         for chunk in self.chunks:
             pos = player.camera.to_screen_pos(screen, chunk.position)
-            rect = pygame.Rect(pos.x, pos.y, chunk.width, chunk.height)
+            rect = pygame.Rect(pos.x, pos.y, chunk.width * player.camera.zoom, chunk.height * player.camera.zoom)
             # print(f"pos {pos} width {chunk.width} height {chunk.height}")
-            pygame.draw.rect(screen, "green", rect, 10, 10)
+            pygame.draw.rect(screen, "green", rect, int(10.0 * player.camera.zoom), int(10.0 * player.camera.zoom))

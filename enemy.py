@@ -12,8 +12,8 @@ class Enemy:
 
     def render(self, screen, camera: Camera):
         screen_pos = camera.to_screen_pos(screen, self.position)
-        pygame.draw.circle(screen, self.color, screen_pos, self.size)
-
+        pygame.draw.circle(screen, self.color, screen_pos, self.size * camera.zoom)
+        
     def update(self, player_pos: Vector2, dt: float):
         dir = player_pos - self.position
         v = dir.normalize() * self.velocity * dt

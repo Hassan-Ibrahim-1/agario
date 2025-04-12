@@ -52,12 +52,12 @@ class Player:
 
     # only use this when rendering
     # not for stuff like physics or pathfinding
-    def get_screen_pos(self, screen: Surface) -> Vector2:
-        self.camera.update_offset(screen)
-        return self.position - self.camera.offset
+    # def get_screen_pos(self, screen: Surface) -> Vector2:
+    #     self.camera.update_offset(screen)
+    #     return self.position - self.camera.offset
 
     def render(self, screen: Surface):
-        pygame.draw.circle(screen, self.color, self.get_screen_pos(screen), self.size)
+        pygame.draw.circle(screen, self.color, self.camera.to_screen_pos(screen, self.position), self.size * self.camera.zoom)
 
     def render_bar(self, screen: Surface):
         self.bar.render(screen, self.health / self.MAX_HEALTH)

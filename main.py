@@ -17,6 +17,7 @@ screen = pygame.display.set_mode(
 clock = pygame.time.Clock()
 running = True
 dt = 0
+zoom = 1
 
 colors = [
     Color(255, 0, 0),      # red
@@ -70,21 +71,24 @@ while running:
     dt = clock.tick(60) / 1000
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.MOUSEWHEEL:
+            player.camera.zoom += event.y * 0.05
+        elif event.type == pygame.QUIT:
             running = False
 
 
     screen.fill("white")
 
     player.render(screen)
-    img_pos = Vector2(
-        player.get_screen_pos(screen).x - img.get_width() / 2,
-        player.get_screen_pos(screen).y - img.get_height() / 2
-    )
-    screen.blit(
-        img,
-        img_pos
-    )
+
+    # img_pos = Vector2(
+    #     player.get_screen_pos(screen).x - img.get_width() / 2,
+    #     player.get_screen_pos(screen).y - img.get_height() / 2
+    # )
+    # screen.blit(
+    #     img,
+    #     img_pos
+    # )
 
     world.update(screen)
 
@@ -93,7 +97,7 @@ while running:
         if (d + enemy.size <= player.size
             or d + player.size <= enemy.size):
             if enemy.size < player.size:
-                player.size += enemy.size ** 0.5
+                player.size = (player.size**2+ enemy.size**2)**0.5
                 enemies.remove(enemy)
             else:
                 player.health -= ENEMY_DAMAGE
