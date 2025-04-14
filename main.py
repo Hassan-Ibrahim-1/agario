@@ -78,7 +78,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.MOUSEWHEEL:
             player.camera.zoom += event.y * 0.05
-            player.camera.zoom = utils.clamp(
+            player.camera.zoom = pygame.math.clamp(
                 player.camera.zoom,
                 player.camera.MIN_ZOOM,
                 player.camera.MAX_ZOOM,

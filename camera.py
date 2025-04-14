@@ -2,7 +2,7 @@ from pygame import Vector2, Surface
 
 
 class Camera:
-    # dumb hard coded value
+    # dumb hard coded values
     MIN_ZOOM = 0.2
     MAX_ZOOM = 5
 
