@@ -4,15 +4,14 @@ from pygame import Vector2, Color
 from enemy import Enemy
 from food import Food
 from player import Player
+import utils
 from world import World
 
 pygame.init()
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 screen = pygame.display.set_mode(
-    (SCREEN_WIDTH, SCREEN_HEIGHT),
-    flags=pygame.SCALED,
-    vsync=1
+    (SCREEN_WIDTH, SCREEN_HEIGHT), flags=pygame.SCALED, vsync=1
 )
 clock = pygame.time.Clock()
 running = True
@@ -20,52 +19,58 @@ dt = 0
 zoom = 1
 
 colors = [
-    Color(255, 0, 0),      # red
-    Color(0, 255, 0),      # green
-    Color(0, 0, 255),      # blue
-    Color(255, 255, 0),    # yellow
-    Color(128, 0, 128),    # purple
-    Color(255, 165, 0),    # orange
-    Color(165, 42, 42),    # brown
+    Color(255, 0, 0),  # red
+    Color(0, 255, 0),  # green
+    Color(0, 0, 255),  # blue
+    Color(255, 255, 0),  # yellow
+    Color(128, 0, 128),  # purple
+    Color(255, 165, 0),  # orange
+    Color(165, 42, 42),  # brown
     Color(255, 192, 203),  # pink
-    Color(0, 255, 255)     # cyan
+    Color(0, 255, 255),  # cyan
 ]
 
 font = pygame.font.SysFont(None, 24)
-img = font.render('Hello World', True, "blue")
+img = font.render("Hello World", True, "blue")
 
 ENEMY_DAMAGE = 10
 
 player = Player(
-    Vector2(
-        screen.get_width() / 2,
-        screen.get_height() / 2
-    ),
-    random.choice(colors)
+    Vector2(screen.get_width() / 2, screen.get_height() / 2),
+    random.choice(colors),
 )
 
 world = World(player)
 
+
 def random_world_pos() -> Vector2:
-    return Vector2(random.randint(0, World.WORLD_WIDTH), random.randint(0, World.WORLD_HEIGHT))
+    return Vector2(
+        random.randint(0, World.WORLD_WIDTH), random.randint(0, World.WORLD_HEIGHT)
+    )
+
 
 def spawn_food() -> Food:
     return Food(random_world_pos(), random.randint(5, 20), random.choice(colors))
 
-enemies: list[Enemy] = [] 
+
+enemies: list[Enemy] = []
 for x in range(10):
     xpos = random.randint(0, SCREEN_WIDTH)
     ypos = random.randint(0, SCREEN_HEIGHT)
-    enemies.append(Enemy(Vector2(xpos, ypos), random.randint(20, 80), random.choice(colors)))
+    enemies.append(
+        Enemy(Vector2(xpos, ypos), random.randint(20, 80), random.choice(colors))
+    )
 
-def dist(p1,p2):
+
+def dist(p1, p2):
     x1 = p1[0]
     y1 = p1[1]
     x2 = p2[0]
     y2 = p2[1]
     xd = x2 - x1
     yd = y2 - y1
-    return (xd ** 2 + yd ** 2) ** 0.5
+    return (xd**2 + yd**2) ** 0.5
+
 
 while running:
     dt = clock.tick(60) / 1000
@@ -73,9 +78,14 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.MOUSEWHEEL:
             player.camera.zoom += event.y * 0.05
+            player.camera.zoom = utils.clamp(
+                player.camera.zoom,
+                player.camera.MIN_ZOOM,
+                player.camera.MAX_ZOOM,
+            )
+
         elif event.type == pygame.QUIT:
             running = False
-
 
     screen.fill("white")
 
@@ -94,10 +104,9 @@ while running:
 
     for enemy in enemies:
         d = dist(enemy.position, player.position)
-        if (d + enemy.size <= player.size
-            or d + player.size <= enemy.size):
+        if d + enemy.size <= player.size or d + player.size <= enemy.size:
             if enemy.size < player.size:
-                player.size = (player.size**2+ enemy.size**2)**0.5
+                player.size = (player.size**2 + enemy.size**2) ** 0.5
                 enemies.remove(enemy)
             else:
                 player.health -= ENEMY_DAMAGE
@@ -121,6 +130,8 @@ while running:
 
     player.render_bar(screen)
     world.render_chunk_outlines(screen, player)
+
+    print(player.camera.zoom)
 
     pygame.display.flip()
 

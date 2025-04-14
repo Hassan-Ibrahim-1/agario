@@ -5,6 +5,7 @@ from pygame.key import ScancodeWrapper
 from bar import Bar
 from camera import Camera
 
+
 class Player:
     STARTING_SIZE = 40
     MAX_SPEED = 200
@@ -57,7 +58,12 @@ class Player:
     #     return self.position - self.camera.offset
 
     def render(self, screen: Surface):
-        pygame.draw.circle(screen, self.color, self.camera.to_screen_pos(screen, self.position), self.size * self.camera.zoom)
+        pygame.draw.circle(
+            screen,
+            self.color,
+            self.camera.to_screen_pos(screen, self.position),
+            self.size * self.camera.zoom,
+        )
 
     def render_bar(self, screen: Surface):
         self.bar.render(screen, self.health / self.MAX_HEALTH)
