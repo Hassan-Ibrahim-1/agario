@@ -129,12 +129,7 @@ while running:
     if keys[pygame.K_ESCAPE]:
         running = False
 
-    moving = player.update(keys, dt)
-    if not moving:
-        player.speed = pygame.Vector2(0, 0)
-
-    # d = v / t
-    player.position += player.speed * dt
+    player.update(keys, dt)
 
     player.render_bar(screen)
     world.render_chunk_outlines(screen, player)

@@ -1,7 +1,7 @@
 import pygame
 from pygame import Color, Surface, Vector2
 from pygame.key import ScancodeWrapper
-import time
+import time, math
 
 from bar import Bar
 from camera import Camera
@@ -10,23 +10,26 @@ from camera import Camera
 class Blob:
     def __init__(
         self,
-        target_pos: Vector2,
+        pos: Vector2,
         size: int,
-        speed: Vector2,
         color: pygame.Color,
         camera: Camera,
     ):
-        self.target_position = target_pos
+        self.position = pos.copy()
         self.size = size
-        self.speed = speed
         self.color = color
         self.camera = camera
+        self.dir = Vector2(0, 0)
+
+    def update(self, size: int, speed: Vector2, dt: float):
+        self.size = size
+        self.position += speed * dt
 
     def render(self, screen):
         pygame.draw.circle(
             screen,
             self.color,
-            self.camera.to_screen_pos(screen, self.target_position),
+            self.camera.to_screen_pos(screen, self.position),
             self.size * self.camera.zoom,
         )
 
@@ -36,7 +39,7 @@ class Player:
     MAX_SPEED = 200
     MAX_HEALTH = 100
     # in ms
-    SPLIT_COOLDOWN = 1000
+    SPLIT_COOLDOWN = 0.5
 
     def __init__(self, pos: Vector2, color: Color) -> None:
         self.speed = Vector2(0, 0)
@@ -54,14 +57,12 @@ class Player:
             Blob(
                 self.position,
                 self.size,
-                self.speed,
                 self.color,
                 self.camera,
             )
         ]
 
-    # returns if the player is moving or not
-    def update(self, keys: ScancodeWrapper, dt: float) -> bool:
+    def update(self, keys: ScancodeWrapper, dt: float):
         moving = False
         if keys[pygame.K_w]:
             self.speed.y -= self.acceleration * dt
@@ -92,7 +93,13 @@ class Player:
         if self.speed.y < -self.MAX_SPEED:
             self.speed.y = -self.MAX_SPEED
 
-        return moving
+        if not moving:
+            self.speed = Vector2(0, 0)
+
+        for blob in self.blobs:
+            blob.update(self.size, self.speed, dt)
+
+        self.position += self.speed * dt
 
     def split(self):
         blob_count = len(self.blobs) * 2
@@ -101,17 +108,40 @@ class Player:
         print(f"current len: {len(self.blobs)}")
         print(f"new len: {blob_count}")
 
+        self.size = self.size // 2
+
         self.blobs = []
-        for _ in range(blob_count):
+        positions = self.generate_circle_positions(blob_count, self.size, self.position)
+        for i in range(blob_count):
             self.blobs.append(
                 Blob(
-                    self.position,
+                    positions[i],
                     self.size,
-                    self.speed,
                     self.color,
                     self.camera,
                 )
             )
+
+    def generate_circle_positions(self, num_circles, radius, center):
+        positions: list[Vector2] = []
+        diameter = 2 * radius
+        grid_size = math.ceil(math.sqrt(num_circles))
+
+        total_grid_size = grid_size * diameter
+        x0 = center[0] - total_grid_size / 2 + radius
+        y0 = center[1] - total_grid_size / 2 + radius
+
+        count = 0
+        for i in range(grid_size):
+            for j in range(grid_size):
+                if count >= num_circles:
+                    break
+                x = x0 + i * diameter
+                y = y0 + j * diameter
+                positions.append(Vector2(x, y))
+                count += 1
+
+        return positions
 
     def render(self, screen: Surface):
         for blob in self.blobs:
