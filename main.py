@@ -139,7 +139,7 @@ while running:
     player.render_bar(screen)
     world.render_chunk_outlines(screen, player)
 
-    print(player.camera.zoom)
+    # print(player.camera.zoom)
 
     pygame.display.flip()
 

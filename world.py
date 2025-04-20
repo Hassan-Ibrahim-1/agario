@@ -95,7 +95,7 @@ class World:
                 self.chunks.append(Chunk(pos.copy(), player))
                 self.chunks[-1].spawn_food(Chunk.MAX_FOOD_PER_CHUNK)
                 pos.y += Chunk.CHUNK_SIZE
-                print(pos)
+                # print(pos)
 
             pos.x += Chunk.CHUNK_SIZE
 

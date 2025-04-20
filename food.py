@@ -2,9 +2,10 @@ from pygame import Color, Vector2
 import pygame
 from camera import Camera
 
+
 class Food:
     def __init__(self, pos: Vector2, radius: int, color: Color) -> None:
-        self.position = pos 
+        self.position = pos
         self.radius = radius
         self.color = color
 
@@ -18,9 +19,6 @@ class Food:
         pygame.draw.circle(
             screen,
             self.color,
-            (
-                int(screen_pos.x),
-                int(screen_pos.y)
-            ),
-            self.radius * camera.zoom
+            (int(screen_pos.x), int(screen_pos.y)),
+            self.radius * camera.zoom,
         )
