@@ -126,6 +126,7 @@ class Player:
         print(f"current len: {len(self.blobs)}")
         print(f"new len: {self.blob_count}")
 
+        # this is garbage
         try:
             self.spawn_blobs()
         except:

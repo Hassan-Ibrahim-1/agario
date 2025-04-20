@@ -10,9 +10,5 @@ multiplayer
 
 
 Splitting:
-    - player is made up of blobs that all share the same 
-      acceleration / speed
-    - when splitting - delete all current blobs and spawn new ones
-        with different sizes
-    - figure out how to position blobs
+    when eating food, update blob positions properly. don't call spawn_blobs
   
