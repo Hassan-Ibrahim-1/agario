@@ -50,6 +50,7 @@ class Player:
         self.health = self.MAX_HEALTH
         self.bar = Bar(Vector2(100, 100), Color(0, 0, 0), Color(255, 0, 0), 100, 20)
         self.growth_rate = 1
+        self.blob_count = 1
         self.last_split: float = 0
         self.camera = Camera(self.position)
 
@@ -96,23 +97,19 @@ class Player:
         if not moving:
             self.speed = Vector2(0, 0)
 
+        self.spawn_blobs()
+
         for blob in self.blobs:
             blob.update(self.size, self.speed, dt)
 
         self.position += self.speed * dt
 
-    def split(self):
-        blob_count = len(self.blobs) * 2
-
-        print("spawning new blobs")
-        print(f"current len: {len(self.blobs)}")
-        print(f"new len: {blob_count}")
-
-        self.size = self.size // 2
-
+    def spawn_blobs(self):
         self.blobs = []
-        positions = self.generate_circle_positions(blob_count, self.size, self.position)
-        for i in range(blob_count):
+        positions = self.generate_circle_positions(
+            self.blob_count, self.size, self.position
+        )
+        for i in range(self.blob_count):
             self.blobs.append(
                 Blob(
                     positions[i],
@@ -121,6 +118,14 @@ class Player:
                     self.camera,
                 )
             )
+
+    def split(self):
+        self.blob_count *= 2
+        self.size = self.size // 2
+
+        print("spawning new blobs")
+        print(f"current len: {len(self.blobs)}")
+        print(f"new len: {self.blob_count}")
 
     def generate_circle_positions(self, num_circles, radius, center):
         positions: list[Vector2] = []
