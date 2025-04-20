@@ -1,6 +1,7 @@
 from pygame import Rect, Color, Vector2
 import pygame
 
+
 class Bar:
     def __init__(
         self,
@@ -8,19 +9,18 @@ class Bar:
         base_colour: Color,
         bar_colour: Color,
         max_width: float,
-        height: float
+        height: float,
     ):
-        self.base_colour = base_colour,
+        self.base_colour = (base_colour,)
         self.bar_colour = bar_colour
         self.position = position
         self.max_width = max_width
         self.height = height
 
     def render(self, screen: pygame.Surface, bar_percent: float):
-        base_rect = pygame.Rect(self.position.x,
-                           self.position.y,
-                           self.max_width,
-                           self.height)
+        base_rect = pygame.Rect(
+            self.position.x, self.position.y, self.max_width, self.height
+        )
         pygame.draw.rect(screen, self.base_colour, base_rect)
 
         bar_rect = base_rect.copy()
