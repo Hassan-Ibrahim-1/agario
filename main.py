@@ -50,7 +50,11 @@ def random_world_pos() -> Vector2:
 
 
 def spawn_food() -> Food:
-    return Food(random_world_pos(), random.randint(5, 20), random.choice(colors))
+    return Food(
+        random_world_pos(),
+        random.randint(5, 20),
+        random.choice(colors),
+    )
 
 
 enemies: list[Enemy] = []
@@ -58,7 +62,11 @@ for x in range(10):
     xpos = random.randint(0, SCREEN_WIDTH)
     ypos = random.randint(0, SCREEN_HEIGHT)
     enemies.append(
-        Enemy(Vector2(xpos, ypos), random.randint(20, 80), random.choice(colors))
+        Enemy(
+            Vector2(xpos, ypos),
+            random.randint(20, 80),
+            random.choice(colors),
+        )
     )
 
 
