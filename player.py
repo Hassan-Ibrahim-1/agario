@@ -1,7 +1,7 @@
 import pygame
 from pygame import Color, Surface, Vector2
 from pygame.key import ScancodeWrapper
-import time, math
+import time, math, random
 
 from bar import Bar
 from camera import Camera
@@ -97,20 +97,18 @@ class Player:
         if not moving:
             self.speed = Vector2(0, 0)
 
-        self.spawn_blobs()
-
         for blob in self.blobs:
             blob.update(self.size, self.speed, dt)
 
         self.position += self.speed * dt
 
     def spawn_blobs(self):
-        self.blobs = []
+        blobs = []
         positions = self.generate_circle_positions(
             self.blob_count, self.size, self.position
         )
         for i in range(self.blob_count):
-            self.blobs.append(
+            blobs.append(
                 Blob(
                     positions[i],
                     self.size,
@@ -118,6 +116,7 @@ class Player:
                     self.camera,
                 )
             )
+        self.blobs = blobs
 
     def split(self):
         self.blob_count *= 2
@@ -127,24 +126,38 @@ class Player:
         print(f"current len: {len(self.blobs)}")
         print(f"new len: {self.blob_count}")
 
-    def generate_circle_positions(self, num_circles, radius, center):
-        positions: list[Vector2] = []
+        try:
+            self.spawn_blobs()
+        except:
+            pass
+
+    def generate_circle_positions(
+        self,
+        num_circles,
+        radius,
+        center: Vector2,
+        max_attempts=10000,
+    ) -> list[Vector2]:
+        area_size = math.sqrt(num_circles) * 3 * radius
+        cx, cy = center
+        half_size = area_size / 2
         diameter = 2 * radius
-        grid_size = math.ceil(math.sqrt(num_circles))
+        positions: list[Vector2] = []
 
-        total_grid_size = grid_size * diameter
-        x0 = center[0] - total_grid_size / 2 + radius
-        y0 = center[1] - total_grid_size / 2 + radius
+        for _ in range(num_circles):
+            for _ in range(max_attempts):
+                x = random.uniform(cx - half_size + radius, cx + half_size - radius)
+                y = random.uniform(cy - half_size + radius, cy + half_size - radius)
+                new_pos = Vector2(x, y)
 
-        count = 0
-        for i in range(grid_size):
-            for j in range(grid_size):
-                if count >= num_circles:
+                # Check for overlap with existing circles
+                if all(
+                    math.hypot(x - px, y - py) >= diameter for (px, py) in positions
+                ):
+                    positions.append(new_pos)
                     break
-                x = x0 + i * diameter
-                y = y0 + j * diameter
-                positions.append(Vector2(x, y))
-                count += 1
+            else:
+                raise Exception("Could not place all circles without overlap.")
 
         return positions
 
