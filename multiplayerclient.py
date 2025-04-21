@@ -54,7 +54,7 @@ async def run_game():
     players = {}
     player = {"x": SCREEN_WIDTH // 2, "y": SCREEN_HEIGHT // 2, "id": None}
     
-    uri = "ws://localhost:8765"
+    uri = "ws://10.20.81.225:8765" # replace this with the ipv4 address of the server
     async with websockets.connect(uri) as websocket:
         print("Connected to server")
         player["id"] = await websocket.recv()

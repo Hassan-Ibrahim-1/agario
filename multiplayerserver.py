@@ -69,11 +69,11 @@ async def handler(websocket):
 async def main():
     print("Starting server...")
 
-    start_server = websockets.serve(handler, "localhost", 8765)
+    start_server = websockets.serve(handler, "0.0.0.0", 8765)
 
     broadcast_task = asyncio.create_task(broadcast_game_state())
 
-    print("Server is running on ws://localhost:8765")
+    print("Server is running on ws://0.0.0.0:8765")
     await asyncio.gather(start_server, broadcast_task)
 
 try:
