@@ -1,4 +1,5 @@
 from pygame import Vector2, Color
+from collision_circle import CollisionCircle
 import pygame
 
 from camera import Camera
@@ -21,3 +22,6 @@ class Enemy:
         dir = player_pos - self.position
         v = dir.normalize() * self.velocity * dt
         self.position += v
+
+    def collision_circle(self) -> CollisionCircle:
+        return CollisionCircle(self.position.copy(), self.size)

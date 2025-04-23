@@ -54,14 +54,19 @@ class Chunk:
 
     def update(self, screen):
         food_to_remove: list[int] = []
+        collision_circles = self.player.collision_circles()
         for i, food in enumerate(self.food):
-            distance = (self.player.position - Vector2(food.position)).length()
-            if distance < self.player.size:
-                self.player.size = (self.player.size**2 + food.radius**2) ** 0.5
-                food_to_remove.append(i)
-                continue
+            food_eaten = False
 
-            food.render(screen, self.player.camera)
+            for cc in collision_circles:
+                if cc.is_colliding_with(food.collision_circle()):
+                    self.player.size = (self.player.size**2 + food.radius**2) ** 0.5
+                    food_to_remove.append(i)
+                    food_eaten = True
+                    break
+
+            if not food_eaten:
+                food.render(screen, self.player.camera)
 
         # go in reverse order to avoid skipping over elements
         for i in sorted(food_to_remove, reverse=True):
@@ -83,7 +88,6 @@ class World:
     # temporary
     CHUNKS_PER_AXIS = 9
 
-    # despawn food when not in chunk
     def __init__(self, player: Player) -> None:
         self.chunks: list[Chunk] = []
         self.player = player

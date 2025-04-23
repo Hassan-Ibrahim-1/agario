@@ -5,6 +5,7 @@ import time, math, random
 
 from bar import Bar
 from camera import Camera
+from collision_circle import CollisionCircle
 
 
 class Blob:
@@ -15,7 +16,7 @@ class Blob:
         color: pygame.Color,
         camera: Camera,
     ):
-        self.position = pos.copy()
+        self.position = pos
         self.size = size
         self.color = color
         self.camera = camera
@@ -32,6 +33,9 @@ class Blob:
             self.camera.to_screen_pos(screen, self.position),
             self.size * self.camera.zoom,
         )
+
+    def collision_circle(self) -> CollisionCircle:
+        return CollisionCircle(self.position.copy(), self.size)
 
 
 class Player:
@@ -56,7 +60,7 @@ class Player:
 
         self.blobs: list[Blob] = [
             Blob(
-                self.position,
+                self.position.copy(),
                 self.size,
                 self.color,
                 self.camera,
@@ -110,7 +114,7 @@ class Player:
         for i in range(self.blob_count):
             blobs.append(
                 Blob(
-                    positions[i],
+                    positions[i].copy(),
                     self.size,
                     self.color,
                     self.camera,
@@ -174,3 +178,11 @@ class Player:
 
     def render_bar(self, screen: Surface):
         self.bar.render(screen, self.health / self.MAX_HEALTH)
+
+    # returns a list of collision circles of all player blobs
+    def collision_circles(self) -> list[CollisionCircle]:
+        circles = []
+        for blob in self.blobs:
+            circles.append(blob.collision_circle())
+
+        return circles

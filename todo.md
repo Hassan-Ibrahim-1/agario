@@ -10,5 +10,13 @@ multiplayer
 
 
 Splitting:
-    when eating food, update blob positions properly. don't call spawn_blobs
+    -- when eating food, update blob positions properly. don't call spawn_blobs
+
+    handle collisions properly
+    smoother movement - lag back effect
   
+
+Score counter
+Food absorb animation
+better enemy ai
+parasites

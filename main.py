@@ -45,7 +45,8 @@ world = World(player)
 
 def random_world_pos() -> Vector2:
     return Vector2(
-        random.randint(0, World.WORLD_WIDTH), random.randint(0, World.WORLD_HEIGHT)
+        random.randint(0, World.WORLD_WIDTH),
+        random.randint(0, World.WORLD_HEIGHT),
     )
 
 
@@ -98,15 +99,6 @@ while running:
     screen.fill("white")
 
     player.render(screen)
-
-    # img_pos = Vector2(
-    #     player.get_screen_pos(screen).x - img.get_width() / 2,
-    #     player.get_screen_pos(screen).y - img.get_height() / 2
-    # )
-    # screen.blit(
-    #     img,
-    #     img_pos
-    # )
 
     world.update(screen)
 

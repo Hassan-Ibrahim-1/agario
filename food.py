@@ -1,6 +1,7 @@
 from pygame import Color, Vector2
 import pygame
 from camera import Camera
+from collision_circle import CollisionCircle
 
 
 class Food:
@@ -22,3 +23,6 @@ class Food:
             (int(screen_pos.x), int(screen_pos.y)),
             self.radius * camera.zoom,
         )
+
+    def collision_circle(self) -> CollisionCircle:
+        return CollisionCircle(self.position.copy(), self.radius)
