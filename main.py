@@ -4,7 +4,6 @@ from pygame import Vector2, Color
 from enemy import Enemy
 from food import Food
 from player import Player
-import utils
 from world import World
 
 pygame.init()
@@ -70,20 +69,6 @@ for x in range(10):
         )
     )
 
-
-def dist(p1, p2):
-    x1 = p1[0]
-    y1 = p1[1]
-    x2 = p2[0]
-    y2 = p2[1]
-    xd = x2 - x1
-    yd = y2 - y1
-    return (xd**2 + yd**2) ** 0.5
-
-
-# TODO: there's too much happening the game loop
-# split stuff up
-
 while running:
     dt = clock.tick(60) / 1000
 
@@ -115,7 +100,6 @@ while running:
                     enemies_to_remove.add(i)
                 else:
                     player.health -= ENEMY_DAMAGE
-                    print("taking damage")
                 break
 
     for i in sorted(enemies_to_remove, reverse=True):
@@ -134,8 +118,6 @@ while running:
 
     player.render_bar(screen)
     world.render_chunk_outlines(screen, player)
-
-    # print(player.camera.zoom)
 
     pygame.display.flip()
 
