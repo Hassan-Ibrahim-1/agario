@@ -81,6 +81,9 @@ def dist(p1, p2):
     return (xd**2 + yd**2) ** 0.5
 
 
+# TODO: there's too much happening the game loop
+# split stuff up
+
 while running:
     dt = clock.tick(60) / 1000
 
@@ -102,15 +105,21 @@ while running:
 
     world.update(screen)
 
-    for enemy in enemies:
-        d = dist(enemy.position, player.position)
-        if d + enemy.size <= player.size or d + player.size <= enemy.size:
-            if enemy.size < player.size:
-                player.size = (player.size**2 + enemy.size**2) ** 0.5
-                enemies.remove(enemy)
-            else:
-                player.health -= ENEMY_DAMAGE
-                print("taking damage")
+    collision_circles = player.collision_circles()
+    enemies_to_remove: set[int] = set()
+    for i, enemy in enumerate(enemies):
+        for cc in collision_circles:
+            if cc.is_colliding_with(enemy.collision_circle()):
+                if enemy.size < player.size:
+                    player.size = (player.size**2 + enemy.size**2) ** 0.5
+                    enemies_to_remove.add(i)
+                else:
+                    player.health -= ENEMY_DAMAGE
+                    print("taking damage")
+                break
+
+    for i in sorted(enemies_to_remove, reverse=True):
+        del enemies[i]
 
     for enemy in enemies:
         enemy.render(screen, player.camera)

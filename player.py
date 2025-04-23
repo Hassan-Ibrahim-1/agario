@@ -40,6 +40,7 @@ class Blob:
 
 class Player:
     STARTING_SIZE = 40
+    MIN_SIZE = 10
     MAX_SPEED = 200
     MAX_HEALTH = 100
     # in ms
@@ -106,9 +107,9 @@ class Player:
 
         self.position += self.speed * dt
 
-    def spawn_blobs(self):
+    def _spawn_blobs(self):
         blobs = []
-        positions = self.generate_circle_positions(
+        positions = self._generate_circle_positions(
             self.blob_count, self.size, self.position
         )
         for i in range(self.blob_count):
@@ -122,21 +123,30 @@ class Player:
             )
         self.blobs = blobs
 
+    def food_eaten_callback(self):
+        self._spawn_blobs()
+
     def split(self):
+        if self.size <= self.MIN_SIZE:
+            self.size = self.MIN_SIZE
+            return
+
+        # if _spawn_blobs fails these are used to reset state
+        original_size = self.size
+        original_blob_count = self.blob_count
+
         self.blob_count *= 2
         self.size = self.size // 2
 
-        print("spawning new blobs")
-        print(f"current len: {len(self.blobs)}")
-        print(f"new len: {self.blob_count}")
-
         # this is garbage
         try:
-            self.spawn_blobs()
+            self._spawn_blobs()
         except:
+            self.size = original_size
+            self.blob_count = original_blob_count
             pass
 
-    def generate_circle_positions(
+    def _generate_circle_positions(
         self,
         num_circles,
         radius,
