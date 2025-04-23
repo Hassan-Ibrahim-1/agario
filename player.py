@@ -174,7 +174,7 @@ class Player:
                     positions.append(new_pos)
                     break
             else:
-                raise Exception("Could not place all circles without overlap.")
+                return None
 
         return positions
 
