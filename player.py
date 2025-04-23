@@ -129,9 +129,6 @@ class Player:
         self.blobs = blobs
         return True
 
-    def food_eaten_callback(self):
-        self._spawn_blobs()
-
     def split(self):
         if self.size <= self.MIN_SIZE:
             self.size = self.MIN_SIZE

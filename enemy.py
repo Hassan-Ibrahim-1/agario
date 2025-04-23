@@ -10,7 +10,7 @@ class Enemy:
         self, pos: Vector2, size: int, color: Color, velocity: float = 15
     ) -> None:
         self.position = pos
-        self.velocity: float = velocity
+        self.velocity = velocity
         self.color = color
         self.size = size
 
