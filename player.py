@@ -6,6 +6,7 @@ import time, math, random
 from bar import Bar
 from camera import Camera
 from collision_circle import CollisionCircle
+from main import dist
 
 
 class Blob:
@@ -22,9 +23,15 @@ class Blob:
         self.camera = camera
         self.dir = Vector2(0, 0)
 
-    def update(self, size: int, speed: Vector2, dt: float):
+    def update(self, size: int, speed: Vector2, dt: float, blobs: list["Blob"]):
         self.size = size
         self.position += speed * dt
+
+        for blob in blobs:
+            if blob is self:
+                continue
+
+            delta = self.position - blob.position
 
     def render(self, screen):
         pygame.draw.circle(
