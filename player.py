@@ -2,6 +2,7 @@ import pygame
 from pygame import Color, Surface, Vector2
 from pygame.key import ScancodeWrapper
 import time, math, random
+from typing import Optional
 
 from bar import Bar
 from camera import Camera
@@ -114,11 +115,15 @@ class Player:
 
         self.position += self.speed * dt
 
-    def _spawn_blobs(self):
+    def _spawn_blobs(self) -> bool:
         blobs = []
         positions = self._generate_circle_positions(
             self.blob_count, self.size, self.position
         )
+
+        if positions is None:
+            return False
+
         for i in range(self.blob_count):
             blobs.append(
                 Blob(
@@ -129,9 +134,7 @@ class Player:
                 )
             )
         self.blobs = blobs
-
-    def food_eaten_callback(self):
-        self._spawn_blobs()
+        return True
 
     def split(self):
         if self.size <= self.MIN_SIZE:
@@ -145,13 +148,9 @@ class Player:
         self.blob_count *= 2
         self.size = self.size // 2
 
-        # this is garbage
-        try:
-            self._spawn_blobs()
-        except:
+        if not self._spawn_blobs():
             self.size = original_size
             self.blob_count = original_blob_count
-            pass
 
     def _generate_circle_positions(
         self,
@@ -159,7 +158,7 @@ class Player:
         radius,
         center: Vector2,
         max_attempts=10000,
-    ) -> list[Vector2]:
+    ) -> Optional[list[Vector2]]:
         area_size = math.sqrt(num_circles) * 3 * radius
         cx, cy = center
         half_size = area_size / 2
@@ -179,19 +178,13 @@ class Player:
                     positions.append(new_pos)
                     break
             else:
-                raise Exception("Could not place all circles without overlap.")
+                return None
 
         return positions
 
     def render(self, screen: Surface):
         for blob in self.blobs:
             blob.render(screen)
-        # pygame.draw.circle(
-        #     screen,
-        #     self.color,
-        #     self.camera.to_screen_pos(screen, self.position),
-        #     self.size * self.camera.zoom,
-        # )
 
     def render_bar(self, screen: Surface):
         self.bar.render(screen, self.health / self.MAX_HEALTH)
