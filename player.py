@@ -145,8 +145,7 @@ class Player:
         for blob in self.blobs:
             center += blob.position
 
-        center /= len(self.blobs)
-        return center
+        return center / len(self.blobs)
 
     def _spawn_blobs(self) -> bool:
         blobs = []
