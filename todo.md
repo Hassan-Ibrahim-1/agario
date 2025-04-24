@@ -19,6 +19,7 @@ parasites
 main menu
 biomes
 Special abilities and weapons
+Food respawn in chunks
 
 limits on splitting
 limits on player size
