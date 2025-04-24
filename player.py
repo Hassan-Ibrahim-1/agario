@@ -12,7 +12,7 @@ from collision_circle import CollisionCircle
 
 
 class Blob:
-    COHESION_STRENGTH = 0.5
+    COHESION_STRENGTH = 20
 
     def __init__(
         self,
@@ -36,7 +36,6 @@ class Blob:
     ):
         self.size = size
         speed += self._cohesion_force(center_of_mass)
-        print(self._cohesion_force(center_of_mass))
         self.position += speed * dt
 
         for other in blobs:
