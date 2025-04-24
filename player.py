@@ -75,6 +75,8 @@ class Player:
     MIN_SIZE = 10
     MAX_SPEED = 200
     MAX_HEALTH = 100
+    MAX_SIZE = 70
+    MAX_BLOBS = 5
     # in ms
     SPLIT_COOLDOWN = 0.5
 
@@ -177,8 +179,14 @@ class Player:
         original_size = self.size
         original_blob_count = self.blob_count
 
+        if self.blob_count == self.MAX_BLOBS:
+            return
+
         self.blob_count *= 2
+        self.blob_count = int(pygame.math.clamp(self.blob_count, 1, self.MAX_BLOBS))
+
         self.size = self.size // 2
+        self.size = int(pygame.math.clamp(self.size, self.MIN_SIZE, self.MAX_SIZE))
 
         if not self._spawn_blobs():
             self.size = original_size
