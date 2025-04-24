@@ -4,10 +4,11 @@ from pygame.key import ScancodeWrapper
 import time, math, random
 from typing import Optional
 
+import utils
+
 from bar import Bar
 from camera import Camera
 from collision_circle import CollisionCircle
-from main import dist
 
 
 class Blob:
@@ -28,11 +29,20 @@ class Blob:
         self.size = size
         self.position += speed * dt
 
-        for blob in blobs:
-            if blob is self:
+        for other in blobs:
+            if other is self:
                 continue
 
-            delta = self.position - blob.position
+            delta = self.position - other.position
+            dist = delta.length()
+            min_dist = self.size + other.size
+
+            if dist < min_dist and dist > 0:
+                overlap = min_dist - dist
+                push_dir = delta.normalize()
+
+                self.position += push_dir * (overlap / 2)
+                other.position -= push_dir * (overlap / 2)
 
     def render(self, screen):
         pygame.draw.circle(
@@ -111,7 +121,7 @@ class Player:
             self.speed = Vector2(0, 0)
 
         for blob in self.blobs:
-            blob.update(self.size, self.speed, dt)
+            blob.update(self.size, self.speed, dt, self.blobs)
 
         self.position += self.speed * dt
 
