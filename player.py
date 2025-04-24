@@ -12,6 +12,8 @@ from collision_circle import CollisionCircle
 
 
 class Blob:
+    COHESION_STRENGTH = 0.5
+
     def __init__(
         self,
         pos: Vector2,
@@ -23,10 +25,18 @@ class Blob:
         self.size = size
         self.color = color
         self.camera = camera
-        self.dir = Vector2(0, 0)
 
-    def update(self, size: int, speed: Vector2, dt: float, blobs: list["Blob"]):
+    def update(
+        self,
+        size: int,
+        speed: Vector2,
+        dt: float,
+        blobs: list["Blob"],
+        center_of_mass: Vector2,
+    ):
         self.size = size
+        speed += self._cohesion_force(center_of_mass)
+        print(self._cohesion_force(center_of_mass))
         self.position += speed * dt
 
         for other in blobs:
@@ -43,6 +53,11 @@ class Blob:
 
                 self.position += push_dir * (overlap / 2)
                 other.position -= push_dir * (overlap / 2)
+
+    def _cohesion_force(self, center_of_mass: Vector2) -> Vector2:
+        if center_of_mass == self.position:
+            return Vector2(0, 0)
+        return (center_of_mass - self.position).normalize() * self.COHESION_STRENGTH
 
     def render(self, screen):
         pygame.draw.circle(
@@ -120,10 +135,19 @@ class Player:
         if not moving:
             self.speed = Vector2(0, 0)
 
+        center_of_mass = self._calculate_center_of_mass()
         for blob in self.blobs:
-            blob.update(self.size, self.speed, dt, self.blobs)
+            blob.update(self.size, self.speed.copy(), dt, self.blobs, center_of_mass)
 
         self.position += self.speed * dt
+
+    def _calculate_center_of_mass(self) -> Vector2:
+        center = Vector2(0, 0)
+        for blob in self.blobs:
+            center += blob.position
+
+        center /= len(self.blobs)
+        return center
 
     def _spawn_blobs(self) -> bool:
         blobs = []
