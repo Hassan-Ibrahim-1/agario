@@ -14,8 +14,8 @@ Splitting:
 
     -- handle collisions properly
 
-    adjust blob positions when food is eaten
-    smoother movement - lag back effect
+    -- adjust blob positions when food is eaten
+    -- smoother movement - lag back effect
   
 
 Score counter
