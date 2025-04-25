@@ -30,7 +30,6 @@ colors = [
 ]
 
 font = pygame.font.SysFont(None, 24)
-img = font.render("Hello World", True, "blue")
 
 ENEMY_DAMAGE = 10
 
@@ -39,7 +38,7 @@ player = Player(
     random.choice(colors),
 )
 
-world = World(player)
+world = World(screen, player)
 
 
 def random_world_pos() -> Vector2:
@@ -87,7 +86,6 @@ while running:
     screen.fill("white")
 
     player.render(screen)
-
     world.update(screen)
 
     collision_circles = player.collision_circles()
