@@ -21,6 +21,8 @@ colors = [
 
 class Chunk:
     MAX_FOOD_PER_CHUNK = 100
+    FOOD_ATTRACTION = 5
+    FOOD_ATTRACTION_RADIUS = 20
 
     CHUNK_SIZE = 1000
 
@@ -58,13 +60,20 @@ class Chunk:
         collision_circles = self.player.collision_circles()
         for i, food in enumerate(self.food):
             food_eaten = False
-
+            fcc = food.collision_circle()
             for cc in collision_circles:
-                if cc.is_colliding_with(food.collision_circle()):
+                if cc.is_colliding_with(fcc):
                     self.player.size = (self.player.size**2 + food.radius**2) ** 0.5
                     food_to_remove.append(i)
                     food_eaten = True
                     break
+                # check if the player is close enough to start
+                # making the food be attracted to the player
+                else:
+                    fcc.radius = self.FOOD_ATTRACTION_RADIUS
+                    if cc.is_colliding_with(fcc):
+                        dir = (self.player.position - food.position).normalize()
+                        food.position += dir * self.FOOD_ATTRACTION
 
             if not food_eaten:
                 food.render(screen, self.player.camera)

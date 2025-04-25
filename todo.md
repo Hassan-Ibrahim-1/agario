@@ -12,8 +12,10 @@ Splitting:
     -- smoother movement - lag back effect
   
 
-Score counter
+-- Score counter
 Food absorb animation
+blobs grow individually
+bigger blobs move slower
 better enemy ai
 parasites
 main menu
