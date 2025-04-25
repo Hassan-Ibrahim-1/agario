@@ -2,6 +2,7 @@ import random
 
 import pygame
 from food import Food
+from hud import Hud
 from player import Player
 from pygame import Vector2, Color
 
@@ -88,9 +89,10 @@ class World:
     # temporary
     CHUNKS_PER_AXIS = 9
 
-    def __init__(self, player: Player) -> None:
+    def __init__(self, screen, player: Player) -> None:
         self.chunks: list[Chunk] = []
         self.player = player
+        self.hud = Hud(screen)
 
         pos = Vector2(0, 0)
         for _ in range(self.CHUNKS_PER_AXIS):
@@ -106,9 +108,11 @@ class World:
         for chunk in self.chunks:
             chunk.spawn_food(100)
 
+    # renders the hud as well
     def update(self, screen):
         for chunk in self.get_render_chunks(screen):
             chunk.update(screen)
+        self.hud.render(self.player)
 
     # get the chunk that the player is in and the 9 surrounding chunks
     # the first element is always the chunk that the player is currently in

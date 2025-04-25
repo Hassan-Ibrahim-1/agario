@@ -182,7 +182,7 @@ class Player:
         if self.blob_count == self.MAX_BLOBS:
             return
 
-        self.blob_count *= 2
+        self.blob_count += 1
         self.blob_count = int(pygame.math.clamp(self.blob_count, 1, self.MAX_BLOBS))
 
         self.size = self.size // 2
@@ -236,3 +236,9 @@ class Player:
             circles.append(blob.collision_circle())
 
         return circles
+
+    # TODO: fix this calculation
+    # maybe have a dedicated variable
+    def score(self) -> int:
+        size = self.size * self.blob_count
+        return size - self.STARTING_SIZE

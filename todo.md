@@ -19,6 +19,7 @@ parasites
 main menu
 biomes
 Special abilities and weapons
+Audio
 
 limits on splitting
 limits on player size
