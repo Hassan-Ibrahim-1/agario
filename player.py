@@ -121,7 +121,7 @@ class Player:
             current_time = time.time()
             if self.last_split + self.SPLIT_COOLDOWN < current_time:
                 self.last_split = current_time
-                self.split()
+                self._split()
 
         # clamp values
         if self.speed.x > self.MAX_SPEED:
@@ -151,7 +151,7 @@ class Player:
 
     def _spawn_blobs(self) -> bool:
         blobs = []
-        positions = self._generate_circle_positions(
+        positions = self._generate_blob_positions(
             self.blob_count, self.size, self.position
         )
 
@@ -170,7 +170,7 @@ class Player:
         self.blobs = blobs
         return True
 
-    def split(self):
+    def _split(self):
         if self.size <= self.MIN_SIZE:
             self.size = self.MIN_SIZE
             return
@@ -192,7 +192,7 @@ class Player:
             self.size = original_size
             self.blob_count = original_blob_count
 
-    def _generate_circle_positions(
+    def _generate_blob_positions(
         self,
         num_circles,
         radius,
@@ -211,7 +211,6 @@ class Player:
                 y = random.uniform(cy - half_size + radius, cy + half_size - radius)
                 new_pos = Vector2(x, y)
 
-                # Check for overlap with existing circles
                 if all(
                     math.hypot(x - px, y - py) >= diameter for (px, py) in positions
                 ):

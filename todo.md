@@ -18,11 +18,12 @@ blobs grow individually
 bigger blobs move slower
 better enemy ai
 Special abilities and weapons
-respawn food
-parasites
-main menu
 biomes
+
+respawn food
+main menu
 Audio
+parasites
 
 limits on splitting
 limits on player size
