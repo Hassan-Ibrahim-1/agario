@@ -161,20 +161,20 @@ class World:
 
         return surrounding_chunks
 
-    def render_chunk_outlines(self, screen, player: Player):
+    def render_chunk_outlines(self, screen):
         for chunk in self.chunks:
-            pos = player.camera.to_screen_pos(screen, chunk.position)
+            pos = self.player.camera.to_screen_pos(screen, chunk.position)
             rect = pygame.Rect(
                 pos.x,
                 pos.y,
-                chunk.width * player.camera.zoom,
-                chunk.height * player.camera.zoom,
+                chunk.width * self.player.camera.zoom,
+                chunk.height * self.player.camera.zoom,
             )
             # print(f"pos {pos} width {chunk.width} height {chunk.height}")
             pygame.draw.rect(
                 screen,
                 "green",
                 rect,
-                int(10.0 * player.camera.zoom),
-                int(10.0 * player.camera.zoom),
+                int(10.0 * self.player.camera.zoom),
+                int(10.0 * self.player.camera.zoom),
             )

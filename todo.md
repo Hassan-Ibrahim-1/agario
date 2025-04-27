@@ -13,14 +13,15 @@ Splitting:
   
 
 -- Score counter
-Food absorb animation
+-- Food absorb animation
 blobs grow individually
 bigger blobs move slower
 better enemy ai
+Special abilities and weapons
+respawn food
 parasites
 main menu
 biomes
-Special abilities and weapons
 Audio
 
 limits on splitting
