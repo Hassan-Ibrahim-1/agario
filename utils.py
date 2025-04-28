@@ -1,4 +1,10 @@
+import pygame
 from pygame import Vector2
+
+
+def mouse_pos() -> Vector2:
+    x, y = pygame.mouse.get_pos()
+    return Vector2(x, y)
 
 
 def mul_vec(vec1: Vector2, vec2: Vector2) -> Vector2:

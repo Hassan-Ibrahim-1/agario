@@ -1,9 +1,12 @@
 import pygame
 import random
+import utils
 from pygame import Vector2, Color
 from enemy import Enemy
 from food import Food
 from player import Player
+from texture import Texture
+from weapon import Effect, Weapon
 from world import World
 
 
@@ -15,7 +18,7 @@ class Game:
         self._init_pygame()
 
         self.dt: float = 0
-        self.zoom: int = 1
+        self.zoom: float = 1
 
         self.colors = [
             Color(255, 0, 0),  # red
@@ -40,6 +43,13 @@ class Game:
         self.enemies = self._spawn_enemies()
         self.running = False
         self.keys: pygame.key.ScancodeWrapper
+
+        self.gun = Weapon(
+            Vector2(0, 0),
+            Effect.SLOW_DOWN,
+            10,
+            Texture("textures/gun.webp"),
+        )
 
     def _init_pygame(self):
         pygame.init()
@@ -69,7 +79,16 @@ class Game:
         self.player.render_bar(self.screen)
         self.world.render_chunk_outlines(self.screen)
 
+        self._gun_test()
+
         pygame.display.flip()
+
+    def _gun_test(self):
+        self.gun.texture.scale = Vector2(0.1, 0.1)
+        self.gun.position = self.player.position
+        self.gun.look_at(self.screen, self.player.camera, utils.mouse_pos())
+        self.gun.texture.rotation += 180
+        self.gun.render(self.screen, self.player.camera)
 
     def _handle_events(self):
         for event in pygame.event.get():

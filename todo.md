@@ -14,11 +14,11 @@ Splitting:
 
 -- Score counter
 -- Food absorb animation
+Special abilities and weapons
+biomes
 blobs grow individually
 bigger blobs move slower
 better enemy ai
-Special abilities and weapons
-biomes
 
 respawn food
 main menu
