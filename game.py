@@ -10,6 +10,22 @@ from weapon import Effect, Weapon
 from world import World
 
 
+class Weapons:
+    def __init__(self):
+        self.gun = Weapon(
+            Vector2(0, 0),
+            Effect.SLOW_DOWN,
+            10,
+            Texture("textures/gun.webp"),
+        )
+        self.gun.texture.scale = Vector2(0.1, 0.1)
+
+    def as_list(self) -> list[Weapon]:
+        return [
+            self.gun,
+        ]
+
+
 class Game:
     SCREEN_WIDTH = 1280
     SCREEN_HEIGHT = 720
@@ -46,13 +62,9 @@ class Game:
         self.running = False
         self.keys: pygame.key.ScancodeWrapper
 
-        self.player.weapon = Weapon(
-            Vector2(0, 0),
-            Effect.SLOW_DOWN,
-            10,
-            Texture("textures/gun.webp"),
-        )
-        self.player.weapon.texture.scale = Vector2(0.1, 0.1)
+        self.weapons = Weapons()
+
+        self.player.weapon = self.weapons.gun
 
     def _init_pygame(self):
         pygame.init()
@@ -83,6 +95,14 @@ class Game:
         self.world.render_chunk_outlines(self.screen)
 
         pygame.display.flip()
+
+    def _update_weapons(self):
+        ccs = [enemy.collision_circle() for enemy in self.enemies]
+        enemies_to_effect: list[tuple[Effect, int]] = []
+        for weapon in self.weapons.as_list():
+            idx = weapon.check_collision(ccs)
+            if idx is not None:
+                enemies_to_effect.append((weapon.effect, idx))
 
     def _handle_events(self):
         for event in pygame.event.get():

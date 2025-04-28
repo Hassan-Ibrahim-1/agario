@@ -39,3 +39,4 @@ Weapons
         slow down
         damage
     discard weapons on use
+    weapon pick ups

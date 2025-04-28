@@ -94,3 +94,14 @@ class Weapon:
                 Color(252, 186, 3),
             )
         )
+
+    # returns an index of the first enemy that bullet collides with
+    def check_collision(
+        self,
+        collision_circles: list[CollisionCircle],
+    ) -> int | None:
+        for i, cc in enumerate(collision_circles):
+            for bullet in self.bullets:
+                if bullet.collision_circle().is_colliding_with(cc):
+                    return i
+        return None

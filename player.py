@@ -171,7 +171,6 @@ class Player:
         self.weapon.position = self.position
         self.weapon.look_at(screen, self.camera, utils.mouse_pos())
         self.weapon.texture.rotation += 180
-
         self.weapon.render(screen, self.camera)
 
     def _spawn_blobs(self) -> bool:
