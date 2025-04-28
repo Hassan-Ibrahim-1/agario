@@ -32,4 +32,9 @@ reset player splits eventually like in agario
 Weapons
     -- rendering a texture
     -- rotation
-    shooting bullets. delete them once out of all chunks
+    -- shooting bullets. delete them once out of all chunks
+    collisions enemies
+    effects
+        slow down
+        damage
+    discard weapons on use
