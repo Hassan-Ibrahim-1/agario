@@ -25,18 +25,9 @@ class Weapon:
         self.texture = texture
 
     def look_at(self, screen, camera: Camera, target_position: Vector2):
-        target = camera.to_screen_pos(screen, target_position)
-        target = target_position
         pos = camera.to_screen_pos(screen, self.position)
-
-        print(f"target: {target}\npos: {pos}")
-
-        direction = target - pos
-
+        direction = target_position - pos
         self.texture.rotation = direction.angle_to(pygame.Vector2(1, 0))
-
-        if self.texture.rotation < 0:
-            self.texture.rotation += 360
 
     def render(self, screen, camera: Camera):
         self.texture.render(
