@@ -73,7 +73,7 @@ class Blob:
 class Player:
     STARTING_SIZE = 40
     MIN_SIZE = 10
-    MAX_SPEED = 200
+    MAX_SPEED = 1600
     MAX_HEALTH = 100
     MAX_SIZE = 70
     MAX_BLOBS = 5
@@ -124,14 +124,15 @@ class Player:
                 self._split()
 
         # clamp values
-        if self.speed.x > self.MAX_SPEED:
-            self.speed.x = self.MAX_SPEED
-        if self.speed.y > self.MAX_SPEED:
-            self.speed.y = self.MAX_SPEED
-        if self.speed.x < -self.MAX_SPEED:
-            self.speed.x = -self.MAX_SPEED
-        if self.speed.y < -self.MAX_SPEED:
-            self.speed.y = -self.MAX_SPEED
+        max_speed = self.MAX_SPEED / (self.size**0.5)
+        if self.speed.x > max_speed:
+            self.speed.x = max_speed
+        if self.speed.y > max_speed:
+            self.speed.y = max_speed
+        if self.speed.x < -max_speed:
+            self.speed.x = -max_speed
+        if self.speed.y < -max_speed:
+            self.speed.y = -max_speed
 
         if not moving:
             self.speed = Vector2(0, 0)
