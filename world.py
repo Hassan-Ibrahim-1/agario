@@ -2,9 +2,11 @@ import random
 
 import pygame
 from food import Food
+from game import utils
 from hud import Hud
 from player import Player
 from pygame import Vector2, Color
+from utils import Bounds
 
 colors = [
     Color(255, 0, 0),  # red
@@ -93,9 +95,6 @@ class Chunk:
 
 
 class World:
-    WORLD_WIDTH = 6000
-    WORLD_HEIGHT = 6000
-    # temporary
     CHUNKS_PER_AXIS = 9
 
     def __init__(self, screen, player: Player) -> None:
@@ -178,3 +177,7 @@ class World:
                 int(10.0 * self.player.camera.zoom),
                 int(10.0 * self.player.camera.zoom),
             )
+
+    def bounds(self) -> Bounds:
+        s = Chunk.CHUNK_SIZE * self.CHUNKS_PER_AXIS
+        return Bounds(Vector2(0, 0), s, s)

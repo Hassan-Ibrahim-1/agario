@@ -73,7 +73,7 @@ class Blob:
 class Player:
     STARTING_SIZE = 40
     MIN_SIZE = 10
-    MAX_SPEED = 1600
+    MAX_SPEED = 2000
     MAX_HEALTH = 100
     MAX_SIZE = 70
     MAX_BLOBS = 5

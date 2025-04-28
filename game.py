@@ -88,7 +88,7 @@ class Game:
             pos = self.player.camera.to_screen_pos(self.screen, self.player.position)
             self.gun.spawn_bullet(utils.direction_to(pos, utils.mouse_pos()))
 
-        self.gun.update(self.dt)
+        self.gun.update(self.world.bounds(), self.dt)
 
         self.gun.texture.scale = Vector2(0.1, 0.1)
         self.gun.position = self.player.position
@@ -138,12 +138,6 @@ class Game:
 
         for i in sorted(enemies_to_remove, reverse=True):
             del self.enemies[i]
-
-    def _random_world_pos(self) -> Vector2:
-        return Vector2(
-            random.randint(0, World.WORLD_WIDTH),
-            random.randint(0, World.WORLD_HEIGHT),
-        )
 
     def _spawn_enemies(self) -> list[Enemy]:
         enemies = []

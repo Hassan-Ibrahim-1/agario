@@ -6,6 +6,7 @@ from pygame import Vector2
 from pygame import Color
 from camera import Camera
 from collision_circle import CollisionCircle
+from game import utils
 from texture import Texture
 
 
@@ -72,9 +73,18 @@ class Weapon:
 
     # if any bullet is not inside the bounds rect then
     # that bullet gets deleted
-    def update(self, dt: float):
-        for bullet in self.bullets:
+    def update(self, bounds: utils.Bounds, dt: float):
+        bullets_to_remove: list[int] = []
+        for i, bullet in enumerate(self.bullets):
+            if not bounds.contains(bullet.position):
+                bullets_to_remove.append(i)
+                continue
+
             bullet.update(dt)
+
+        # go in reverse order to avoid skipping over elements
+        for i in sorted(bullets_to_remove, reverse=True):
+            del self.bullets[i]
 
     def spawn_bullet(self, dir: Vector2):
         self.bullets.append(

@@ -2,6 +2,18 @@ import pygame
 from pygame import Vector2
 
 
+class Bounds:
+    def __init__(self, top_left: Vector2, w: int, h: int) -> None:
+        self.top_left = top_left
+        self.width = w
+        self.height = h
+
+    def contains(self, p: Vector2) -> bool:
+        return (p.x > self.top_left.x and p.x < self.top_left.x + self.width) and (
+            p.y > self.top_left.y and p.y < self.top_left.y + self.height
+        )
+
+
 def mouse_pos() -> Vector2:
     x, y = pygame.mouse.get_pos()
     return Vector2(x, y)
