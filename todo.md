@@ -15,6 +15,7 @@ Splitting:
 -- Score counter
 -- Food absorb animation
 Special abilities and weapons
+auto zoom
 biomes
 blobs grow individually
 bigger blobs move slower
