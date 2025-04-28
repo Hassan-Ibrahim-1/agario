@@ -2,7 +2,9 @@ import pygame
 from pygame import Color, Surface, Vector2
 from pygame.key import ScancodeWrapper
 import time, math, random
+from weapon import Weapon
 from typing import Optional
+from utils import Bounds
 
 import utils
 
@@ -92,6 +94,9 @@ class Player:
         self.blob_count = 1
         self.last_split: float = 0
         self.camera = Camera(self.position)
+        self.weapon: Weapon | None = None
+        # place holder value
+        self.bounds = Bounds(Vector2(0, 0), 0, 0)
 
         self.blobs: list[Blob] = [
             Blob(
@@ -102,7 +107,7 @@ class Player:
             )
         ]
 
-    def update(self, keys: ScancodeWrapper, dt: float):
+    def update(self, screen, keys: ScancodeWrapper, dt: float):
         moving = False
         if keys[pygame.K_w]:
             self.speed.y -= self.acceleration * dt
@@ -143,12 +148,31 @@ class Player:
 
         self.position += self.speed * dt
 
+        if self.weapon is not None:
+            self._update_weapon(screen, dt)
+
     def _calculate_center_of_mass(self) -> Vector2:
         center = Vector2(0, 0)
         for blob in self.blobs:
             center += blob.position
 
         return center / len(self.blobs)
+
+    def _update_weapon(self, screen, dt: float):
+        assert self.weapon is not None
+        if pygame.mouse.get_pressed()[0]:
+            pos = self.camera.to_screen_pos(screen, self.position)
+            self.weapon.spawn_bullet(utils.direction_to(pos, utils.mouse_pos()))
+
+        self.weapon.update(self.bounds, dt)
+
+    def _render_weapon(self, screen):
+        assert self.weapon is not None
+        self.weapon.position = self.position
+        self.weapon.look_at(screen, self.camera, utils.mouse_pos())
+        self.weapon.texture.rotation += 180
+
+        self.weapon.render(screen, self.camera)
 
     def _spawn_blobs(self) -> bool:
         blobs = []
@@ -225,6 +249,9 @@ class Player:
     def render(self, screen: Surface):
         for blob in self.blobs:
             blob.render(screen)
+
+        if self.weapon is not None:
+            self._render_weapon(screen)
 
     def render_bar(self, screen: Surface):
         self.bar.render(screen, self.health / self.MAX_HEALTH)

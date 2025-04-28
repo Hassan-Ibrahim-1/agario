@@ -33,23 +33,26 @@ class Game:
         ]
 
         self.font = pygame.font.SysFont(None, 24)
+
         self.player = Player(
             Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2),
             random.choice(self.colors),
         )
 
         self.world = World(self.screen, self.player)
+        self.player.bounds = self.world.bounds()
 
         self.enemies = self._spawn_enemies()
         self.running = False
         self.keys: pygame.key.ScancodeWrapper
 
-        self.gun = Weapon(
+        self.player.weapon = Weapon(
             Vector2(0, 0),
             Effect.SLOW_DOWN,
             10,
             Texture("textures/gun.webp"),
         )
+        self.player.weapon.texture.scale = Vector2(0.1, 0.1)
 
     def _init_pygame(self):
         pygame.init()
@@ -72,30 +75,14 @@ class Game:
         self.screen.fill("white")
 
         self.world.update(self.screen)
-        self.player.update(self.keys, self.dt)
+        self.player.update(self.screen, self.keys, self.dt)
         self._update_enemies()
 
         self.player.render(self.screen)
         self.player.render_bar(self.screen)
         self.world.render_chunk_outlines(self.screen)
 
-        self._gun_test()
-
         pygame.display.flip()
-
-    def _gun_test(self):
-        if pygame.mouse.get_pressed()[0]:
-            pos = self.player.camera.to_screen_pos(self.screen, self.player.position)
-            self.gun.spawn_bullet(utils.direction_to(pos, utils.mouse_pos()))
-
-        self.gun.update(self.world.bounds(), self.dt)
-
-        self.gun.texture.scale = Vector2(0.1, 0.1)
-        self.gun.position = self.player.position
-        self.gun.look_at(self.screen, self.player.camera, utils.mouse_pos())
-        self.gun.texture.rotation += 180
-
-        self.gun.render(self.screen, self.player.camera)
 
     def _handle_events(self):
         for event in pygame.event.get():

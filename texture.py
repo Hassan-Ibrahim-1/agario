@@ -1,7 +1,7 @@
 from pygame import Vector2
 import pygame
 
-from player import utils
+import utils
 
 
 class Texture:
