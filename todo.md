@@ -29,3 +29,7 @@ limits on splitting
 limits on player size
 reset player splits eventually like in agario
 
+Weapons
+    -- rendering a texture
+    -- rotation
+    shooting bullets. delete them once out of all chunks

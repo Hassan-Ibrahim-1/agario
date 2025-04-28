@@ -84,10 +84,17 @@ class Game:
         pygame.display.flip()
 
     def _gun_test(self):
+        if pygame.mouse.get_pressed()[0]:
+            pos = self.player.camera.to_screen_pos(self.screen, self.player.position)
+            self.gun.spawn_bullet(utils.direction_to(pos, utils.mouse_pos()))
+
+        self.gun.update(self.dt)
+
         self.gun.texture.scale = Vector2(0.1, 0.1)
         self.gun.position = self.player.position
         self.gun.look_at(self.screen, self.player.camera, utils.mouse_pos())
         self.gun.texture.rotation += 180
+
         self.gun.render(self.screen, self.player.camera)
 
     def _handle_events(self):
