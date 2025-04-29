@@ -87,6 +87,7 @@ class Game:
         self.screen.fill("white")
 
         self.world.update(self.screen)
+        self._update_weapons()
         self.player.update(self.screen, self.keys, self.dt)
         self._update_enemies()
 
@@ -103,6 +104,10 @@ class Game:
             idx = weapon.check_collision(ccs)
             if idx is not None:
                 enemies_to_effect.append((weapon.effect, idx))
+
+        for effect, i in enemies_to_effect:
+            enemy = self.enemies[i]
+            enemy.set_effect(effect)
 
     def _handle_events(self):
         for event in pygame.event.get():

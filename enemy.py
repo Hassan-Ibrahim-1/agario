@@ -1,6 +1,7 @@
 from pygame import Vector2, Color
 from collision_circle import CollisionCircle
 import pygame
+from weapon import Effect
 
 from camera import Camera
 
@@ -15,14 +16,32 @@ class Enemy:
         self.velocity = velocity
         self.color = color
         self.size = size
+        self._effect: Effect | None = None
+        self._effect_duration = 0.0
 
     def render(self, screen, camera: Camera):
         screen_pos = camera.to_screen_pos(screen, self.position)
         pygame.draw.circle(screen, self.color, screen_pos, self.size * camera.zoom)
 
+    def set_effect(self, effect: Effect):
+        self._effect = effect
+        self._effect_duration = effect.duration()
+
     def update(self, player_pos: Vector2, dt: float):
         dir = player_pos - self.position
-        v = dir.normalize() * self.velocity * dt
+
+        vel = self.velocity
+        if self._effect is not None:
+            if self._effect_duration <= 0:
+                self._effect = None
+                self._effect_duration = 0
+            else:
+                match self._effect:
+                    case Effect.SLOW_DOWN:
+                        vel *= self._effect.slowdown_factor()
+                self._effect_duration -= dt
+
+        v = dir.normalize() * vel * dt
         self.position += v
 
     def collision_circle(self) -> CollisionCircle:

@@ -1,4 +1,3 @@
-import math
 import pygame
 from enum import Enum
 from pygame import Vector2
@@ -6,12 +5,23 @@ from pygame import Vector2
 from pygame import Color
 from camera import Camera
 from collision_circle import CollisionCircle
-from game import utils
+import utils
 from texture import Texture
 
 
 class Effect(Enum):
     SLOW_DOWN = 0
+
+    # how long in seconds the effect lasts for
+    def duration(self) -> float:
+        match self:
+            case Effect.SLOW_DOWN:
+                return 0.5
+
+    # meant to be applied to speed
+    def slowdown_factor(self) -> float:
+        assert self == Effect.SLOW_DOWN
+        return 0.1
 
 
 class Bullet:
@@ -96,12 +106,14 @@ class Weapon:
         )
 
     # returns an index of the first enemy that bullet collides with
+    # also deletes the bullet that collides with that enemy
     def check_collision(
         self,
         collision_circles: list[CollisionCircle],
     ) -> int | None:
         for i, cc in enumerate(collision_circles):
-            for bullet in self.bullets:
+            for j, bullet in enumerate(self.bullets):
                 if bullet.collision_circle().is_colliding_with(cc):
+                    del self.bullets[j]
                     return i
         return None
