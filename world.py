@@ -181,3 +181,8 @@ class World:
     def bounds(self) -> Bounds:
         s = Chunk.CHUNK_SIZE * self.CHUNKS_PER_AXIS
         return Bounds(Vector2(0, 0), s, s)
+
+    # returns width, height
+    def dimensions(self) -> tuple[int, int]:
+        s = self.CHUNKS_PER_AXIS * Chunk.CHUNK_SIZE
+        return s, s

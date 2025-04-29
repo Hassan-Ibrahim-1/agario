@@ -112,6 +112,7 @@ class Weapon:
         else:
             return
 
+        self.ammo -= 1
         self.bullets.append(
             Bullet(
                 self.position.copy(),
@@ -134,5 +135,4 @@ class Weapon:
         return None
 
     def delete_bullet(self, i: int):
-        self.ammo -= 1
         del self.bullets[i]

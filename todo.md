@@ -45,3 +45,5 @@ Weapons
         -- ammo counter drawn to screen
     -- discard weapons after it runs out of ammo
     weapon pick ups
+
+Weapon pick ups

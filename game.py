@@ -15,7 +15,7 @@ class Weapons:
         self.gun = Weapon(
             Vector2(0, 0),
             Effect.SLOW_DOWN,
-            2,
+            4,
             10,
             Texture("textures/gun.webp"),
         )
@@ -28,8 +28,8 @@ class Weapons:
 
 
 class Game:
-    SCREEN_WIDTH = 2560
-    SCREEN_HEIGHT = 1440
+    SCREEN_WIDTH = 1280
+    SCREEN_HEIGHT = 720
 
     def __init__(self) -> None:
         self._init_pygame()
@@ -88,7 +88,6 @@ class Game:
         self.screen.fill("white")
 
         self.world.update(self.screen)
-        self._update_weapons()
         self.player.update(self.screen, self.keys, self.dt)
         self._update_enemies()
 
@@ -105,10 +104,6 @@ class Game:
             idx = weapon.check_collision(ccs)
             if idx is not None:
                 enemies_to_effect.append((weapon.effect, idx))
-
-        for effect, i in enemies_to_effect:
-            enemy = self.enemies[i]
-            enemy.set_effect(effect)
 
     def _handle_events(self):
         for event in pygame.event.get():
@@ -155,8 +150,9 @@ class Game:
     def _spawn_enemies(self) -> list[Enemy]:
         enemies = []
         for _ in range(10):
-            xpos = random.randint(0, self.SCREEN_WIDTH)
-            ypos = random.randint(0, self.SCREEN_HEIGHT)
+            w, h = self.world.dimensions()
+            xpos = random.randint(0, w)
+            ypos = random.randint(0, h)
             enemies.append(
                 Enemy(
                     Vector2(xpos, ypos),
