@@ -149,7 +149,10 @@ class Player:
         self.position += self.speed * dt
 
         if self.weapon is not None:
-            self._update_weapon(screen, dt)
+            if self.weapon.ammo <= 0:
+                self.weapon = None
+            else:
+                self._update_weapon(screen, dt)
 
     def _calculate_center_of_mass(self) -> Vector2:
         center = Vector2(0, 0)
