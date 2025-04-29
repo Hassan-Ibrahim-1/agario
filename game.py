@@ -16,6 +16,7 @@ class Weapons:
             Vector2(0, 0),
             Effect.SLOW_DOWN,
             10,
+            2,
             Texture("textures/gun.webp"),
         )
         self.gun.texture.scale = Vector2(0.1, 0.1)

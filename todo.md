@@ -20,6 +20,7 @@ biomes
 blobs grow individually
 bigger blobs move slower
 better enemy ai
+enemies can consume food
 
 respawn food
 main menu
@@ -34,9 +35,12 @@ Weapons
     -- rendering a texture
     -- rotation
     -- shooting bullets. delete them once out of all chunks
-    collisions enemies
+    -- collisions with enemies
     effects
-        slow down
+        -- slow down
         damage
-    discard weapons on use
+        freeze
+    firerate
+    ammo
+    discard weapons after it runs out of ammo
     weapon pick ups

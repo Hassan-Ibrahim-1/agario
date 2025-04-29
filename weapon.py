@@ -1,4 +1,4 @@
-import pygame
+import pygame, time
 from enum import Enum
 from pygame import Vector2
 
@@ -7,6 +7,7 @@ from camera import Camera
 from collision_circle import CollisionCircle
 import utils
 from texture import Texture
+from timer import Timer
 
 
 class Effect(Enum):
@@ -21,7 +22,7 @@ class Effect(Enum):
     # meant to be applied to speed
     def slowdown_factor(self) -> float:
         assert self == Effect.SLOW_DOWN
-        return 0.1
+        return 0.5
 
 
 class Bullet:
@@ -52,6 +53,7 @@ class Weapon:
         pos: Vector2,
         effect: Effect,
         fire_rate: float,
+        ammo: int,
         texture: Texture,
     ) -> None:
         self.position = pos
@@ -60,6 +62,9 @@ class Weapon:
         self.texture = texture
         self.bullets: list[Bullet] = []
         self.bullet_speed = 800
+        self.ammo = ammo
+        self._timer = Timer()
+        self._first_shot = True
 
     def look_at(
         self,
@@ -97,6 +102,13 @@ class Weapon:
             del self.bullets[i]
 
     def spawn_bullet(self, dir: Vector2):
+        time_threshold = 1.0 / self.fire_rate
+        if self._timer.elapsed() > time_threshold or self._first_shot:
+            self._first_shot = False
+            self._timer.reset()
+        else:
+            return
+
         self.bullets.append(
             Bullet(
                 self.position.copy(),
