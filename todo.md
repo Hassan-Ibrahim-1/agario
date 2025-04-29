@@ -40,7 +40,8 @@ Weapons
         -- slow down
         damage
         freeze
-    firerate
+    -- firerate
     ammo
+        -- ammo counter drawn to screen
     discard weapons after it runs out of ammo
     weapon pick ups

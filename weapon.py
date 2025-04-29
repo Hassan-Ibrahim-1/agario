@@ -99,9 +99,12 @@ class Weapon:
 
         # go in reverse order to avoid skipping over elements
         for i in sorted(bullets_to_remove, reverse=True):
-            del self.bullets[i]
+            self.delete_bullet(i)
 
     def spawn_bullet(self, dir: Vector2):
+        if self.ammo <= 0:
+            return
+
         time_threshold = 1.0 / self.fire_rate
         if self._timer.elapsed() > time_threshold or self._first_shot:
             self._first_shot = False
@@ -126,6 +129,10 @@ class Weapon:
         for i, cc in enumerate(collision_circles):
             for j, bullet in enumerate(self.bullets):
                 if bullet.collision_circle().is_colliding_with(cc):
-                    del self.bullets[j]
+                    self.delete_bullet(j)
                     return i
         return None
+
+    def delete_bullet(self, i: int):
+        self.ammo -= 1
+        del self.bullets[i]

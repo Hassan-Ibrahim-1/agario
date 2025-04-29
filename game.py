@@ -15,8 +15,8 @@ class Weapons:
         self.gun = Weapon(
             Vector2(0, 0),
             Effect.SLOW_DOWN,
-            10,
             2,
+            10,
             Texture("textures/gun.webp"),
         )
         self.gun.texture.scale = Vector2(0.1, 0.1)
@@ -28,8 +28,8 @@ class Weapons:
 
 
 class Game:
-    SCREEN_WIDTH = 1280
-    SCREEN_HEIGHT = 720
+    SCREEN_WIDTH = 2560
+    SCREEN_HEIGHT = 1440
 
     def __init__(self) -> None:
         self._init_pygame()
