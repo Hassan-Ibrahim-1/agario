@@ -15,9 +15,10 @@ class Effect(Enum):
 
     # how long in seconds the effect lasts for
     def duration(self) -> float:
-        match self:
-            case Effect.SLOW_DOWN:
-                return 0.5
+        if self == Effect.SLOW_DOWN:
+            return 0.5
+        else:
+            return 0
 
     # meant to be applied to speed
     def slowdown_factor(self) -> float:

@@ -36,9 +36,8 @@ class Enemy:
                 self._effect = None
                 self._effect_duration = 0
             else:
-                match self._effect:
-                    case Effect.SLOW_DOWN:
-                        vel *= self._effect.slowdown_factor()
+                if self._effect == Effect.SLOW_DOWN:
+                    vel *= self._effect.slowdown_factor()
                 self._effect_duration -= dt
 
         v = dir.normalize() * vel * dt
