@@ -31,6 +31,7 @@ game over mechanic
 limits on splitting
 limits on player size
 reset player splits eventually like in agario
+redo player.size values. it should also be a float instead of an int
 
 Weapons
     -- rendering a texture

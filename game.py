@@ -1,6 +1,5 @@
 import pygame
 import random
-import utils
 from pygame import Vector2, Color
 from enemy import Enemy
 from food import Food
@@ -166,4 +165,5 @@ class Game:
                     random.choice(self.colors),
                 )
             )
+
         return enemies

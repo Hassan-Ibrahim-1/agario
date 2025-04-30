@@ -58,11 +58,11 @@ class Chunk:
 
     def update(self, screen):
         food_to_remove: list[int] = []
-        collision_circles = self._player.collision_circles()
+        player_collision_circles = self._player.collision_circles()
         for i, food in enumerate(self.food):
             food_eaten = False
             fcc = food.collision_circle()
-            for cc in collision_circles:
+            for cc in player_collision_circles:
                 if cc.is_colliding_with(fcc):
                     self._player.size = (self._player.size**2 + food.radius**2) ** 0.5
                     food_to_remove.append(i)
@@ -78,6 +78,12 @@ class Chunk:
 
             if not food_eaten:
                 food.render(screen, self._player.camera)
+
+        if self._player.weapon is None:
+            for i, weapon in enumerate(self._weapons):
+                for cc in player_collision_circles:
+                    if cc.is_colliding_with(weapon.collision_circle()):
+                        self._player.weapon = self._weapons.pop(i)
 
         # go in reverse order to avoid skipping over elements
         for i in sorted(food_to_remove, reverse=True):
