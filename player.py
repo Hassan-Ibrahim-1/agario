@@ -3,7 +3,7 @@ from pygame import Color, Surface, Vector2
 from pygame.key import ScancodeWrapper
 import time, math, random
 from weapon import Weapon
-from typing import Optional
+from typing import Optional, Callable
 from utils import Bounds
 
 import utils
@@ -100,6 +100,7 @@ class Player:
         # hacky way of communicating to World that the key
         # required to pick up a weapon is pressed
         self.can_pickup_weapon = False
+        self.weapon_discard_callback: Callable[[Weapon], None] | None = None
 
         self.blobs: list[Blob] = [
             Blob(
@@ -156,6 +157,8 @@ class Player:
 
         if self.weapon is not None:
             if self.weapon.ammo <= 0:
+                assert self.weapon_discard_callback is not None
+                self.weapon_discard_callback(self.weapon.copy())
                 self.weapon = None
             else:
                 self._update_weapon(screen, dt)
@@ -277,3 +280,13 @@ class Player:
     def score(self) -> int:
         size = self.size * self.blob_count
         return size - self.STARTING_SIZE
+
+    # checks if a weapon is equal to another
+    # based on everything except position, ammo and bullets
+    def _weapon_mostly_equals(self, w1: Weapon, w2: Weapon) -> bool:
+        return (
+            w1.fire_rate == w2.fire_rate
+            and w1.effect == w2.effect
+            and w1.texture == w2.texture
+            and w1.bullet_speed == w2.bullet_speed
+        )

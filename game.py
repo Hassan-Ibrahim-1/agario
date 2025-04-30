@@ -2,7 +2,6 @@ import pygame
 import random
 from pygame import Vector2, Color
 from enemy import Enemy
-from food import Food
 from player import Player
 from texture import Texture
 from weapon import Effect, Weapon
@@ -24,6 +23,22 @@ class Weapons:
         return [
             self.gun,
         ]
+
+    def find_equivalent_weapon(self, other: Weapon) -> Weapon | None:
+        for weapon in self.as_list():
+            if self._weapon_mostly_equals(weapon, other):
+                return weapon
+        return None
+
+    # checks if a weapon is equal to another
+    # based on everything except position, ammo and bullets
+    def _weapon_mostly_equals(self, w1: Weapon, w2: Weapon) -> bool:
+        return (
+            w1.fire_rate == w2.fire_rate
+            and w1.effect == w2.effect
+            and w1.texture == w2.texture
+            and w1.bullet_speed == w2.bullet_speed
+        )
 
 
 class Game:
@@ -54,6 +69,7 @@ class Game:
             Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2),
             random.choice(self.colors),
         )
+        self.player.weapon_discard_callback = self._weapon_discard_callback
 
         self.world = World(self.screen, self.player)
         self.player.bounds = self.world.bounds()
@@ -98,10 +114,18 @@ class Game:
 
     def _spawn_weapons(self):
         for weapon in self.weapons.as_list():
-            chunk = self.world.random_chunk()
-            wc = weapon.copy()
-            wc.position = chunk.random_pos()
-            chunk.add_weapon(wc)
+            self._spawn_weapon(weapon.copy())
+
+    def _spawn_weapon(self, weapon: Weapon):
+        chunk = self.world.random_chunk()
+        weapon.position = chunk.random_pos()
+        chunk.add_weapon(weapon)
+
+    def _weapon_discard_callback(self, weapon: Weapon):
+        base_weapon = self.weapons.find_equivalent_weapon(weapon)
+        assert base_weapon is not None
+        base_weapon.position = weapon.position
+        self._spawn_weapon(base_weapon.copy())
 
     def _update_weapons(self):
         ccs = [enemy.collision_circle() for enemy in self.enemies]

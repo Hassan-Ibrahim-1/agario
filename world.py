@@ -91,7 +91,6 @@ class Chunk:
 
     def render_weapons(self, screen, camera: Camera):
         for weapon in self._weapons:
-            print(f"rendering a weapon at pos: {weapon.position}")
             weapon.render(screen, camera)
 
     def add_weapon(self, weapon: Weapon):
@@ -108,7 +107,7 @@ class Chunk:
 
 
 class World:
-    CHUNKS_PER_AXIS = 3
+    CHUNKS_PER_AXIS = 1
 
     def __init__(self, screen, player: Player) -> None:
         self.chunks: list[Chunk] = []
