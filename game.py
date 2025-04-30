@@ -102,8 +102,9 @@ class Game:
         self._handle_events()
         self.screen.fill("white")
 
-        self.world.update(self.screen)
+        # player has to be updated before world for weapon pickup reasons
         self.player.update(self.screen, self.keys, self.dt)
+        self.world.update(self.screen)
         self._update_enemies()
 
         self.player.render(self.screen)

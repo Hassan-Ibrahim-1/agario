@@ -280,13 +280,3 @@ class Player:
     def score(self) -> int:
         size = self.size * self.blob_count
         return size - self.STARTING_SIZE
-
-    # checks if a weapon is equal to another
-    # based on everything except position, ammo and bullets
-    def _weapon_mostly_equals(self, w1: Weapon, w2: Weapon) -> bool:
-        return (
-            w1.fire_rate == w2.fire_rate
-            and w1.effect == w2.effect
-            and w1.texture == w2.texture
-            and w1.bullet_speed == w2.bullet_speed
-        )

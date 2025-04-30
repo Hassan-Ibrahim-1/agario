@@ -80,10 +80,16 @@ class Chunk:
                 food.render(screen, self._player.camera)
 
         if self._player.weapon is None and self._player.can_pickup_weapon:
+            weapon_picked_up = False
             for i, weapon in enumerate(self._weapons):
                 for cc in player_collision_circles:
                     if cc.is_colliding_with(weapon.collision_circle()):
                         self._player.weapon = self._weapons.pop(i)
+                        weapon_picked_up = True
+                        break
+
+                if weapon_picked_up:
+                    break
 
         # go in reverse order to avoid skipping over elements
         for i in sorted(food_to_remove, reverse=True):
