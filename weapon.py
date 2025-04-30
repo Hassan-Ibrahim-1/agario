@@ -8,6 +8,7 @@ from collision_circle import CollisionCircle
 import utils
 from texture import Texture
 from timer import Timer
+from typing import Optional
 
 
 class Effect(Enum):
@@ -129,7 +130,7 @@ class Weapon:
     def check_collision(
         self,
         collision_circles: list[CollisionCircle],
-    ) -> int | None:
+    ) -> Optional[int]:
         for i, cc in enumerate(collision_circles):
             for j, bullet in enumerate(self.bullets):
                 if bullet.collision_circle().is_colliding_with(cc):

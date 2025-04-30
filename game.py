@@ -6,6 +6,7 @@ from player import Player
 from texture import Texture
 from weapon import Effect, Weapon
 from world import World
+from typing import Optional
 
 
 class Weapons:
@@ -24,7 +25,7 @@ class Weapons:
             self.gun,
         ]
 
-    def find_equivalent_weapon(self, other: Weapon) -> Weapon | None:
+    def find_equivalent_weapon(self, other: Weapon) -> Optional[Weapon]:
         for weapon in self.as_list():
             if self._weapon_mostly_equals(weapon, other):
                 return weapon

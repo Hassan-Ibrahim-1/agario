@@ -94,13 +94,13 @@ class Player:
         self.blob_count = 1
         self.last_split: float = 0
         self.camera = Camera(self.position)
-        self.weapon: Weapon | None = None
+        self.weapon: Optional[Weapon] = None
         # place holder value
         self.bounds = Bounds(Vector2(0, 0), 0, 0)
         # hacky way of communicating to World that the key
         # required to pick up a weapon is pressed
         self.can_pickup_weapon = False
-        self.weapon_discard_callback: Callable[[Weapon], None] | None = None
+        self.weapon_discard_callback: Optional[Callable[[Weapon], None]] = None
 
         self.blobs: list[Blob] = [
             Blob(

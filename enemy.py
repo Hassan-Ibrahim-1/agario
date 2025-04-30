@@ -2,6 +2,7 @@ from pygame import Vector2, Color
 from collision_circle import CollisionCircle
 import pygame
 from weapon import Effect
+from typing import Optional
 
 from camera import Camera
 
@@ -16,7 +17,7 @@ class Enemy:
         self.velocity = velocity
         self.color = color
         self.size = size
-        self._effect: Effect | None = None
+        self._effect: Optional[Effect] = None
         self._effect_duration = 0.0
 
     def render(self, screen, camera: Camera):
