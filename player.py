@@ -97,6 +97,9 @@ class Player:
         self.weapon: Weapon | None = None
         # place holder value
         self.bounds = Bounds(Vector2(0, 0), 0, 0)
+        # hacky way of communicating to World that the key
+        # required to pick up a weapon is pressed
+        self.can_pickup_weapon = False
 
         self.blobs: list[Blob] = [
             Blob(
@@ -121,6 +124,9 @@ class Player:
         if keys[pygame.K_d]:
             self.speed.x += self.acceleration * dt
             moving = True
+
+        if self.weapon is None:
+            self.can_pickup_weapon = keys[pygame.K_e]
 
         if keys[pygame.K_SPACE]:
             current_time = time.time()

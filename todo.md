@@ -50,6 +50,7 @@ Weapons
 
 Weapon pick ups
     -- each chunk has its own weapons list
-    spawn random weapons in random chunks
-    when a player collides with a weapon, give it to that player
+    -- spawn random weapons in random chunks
+    -- when a player collides with a weapon, give it to that player
+    pick up with e. drop with q
     being able to drop weapons as a player

@@ -63,7 +63,8 @@ class Game:
         self.keys: pygame.key.ScancodeWrapper
 
         self.weapons = Weapons()
-        self._spawn_weapons()
+        self.player.weapon = self.weapons.gun.copy()
+        # self._spawn_weapons()
 
     def _init_pygame(self):
         pygame.init()
@@ -126,6 +127,13 @@ class Game:
         self.keys = pygame.key.get_pressed()
         if self.keys[pygame.K_ESCAPE]:
             self.running = False
+
+        if self.keys[pygame.K_q]:
+            if self.player.weapon is not None:
+                for chunk in self.world.chunks:
+                    if chunk.contains_player():
+                        chunk.add_weapon(self.player.weapon.copy())
+                self.player.weapon = None
 
     def deinit(self):
         pygame.quit()

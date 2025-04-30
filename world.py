@@ -79,7 +79,7 @@ class Chunk:
             if not food_eaten:
                 food.render(screen, self._player.camera)
 
-        if self._player.weapon is None:
+        if self._player.weapon is None and self._player.can_pickup_weapon:
             for i, weapon in enumerate(self._weapons):
                 for cc in player_collision_circles:
                     if cc.is_colliding_with(weapon.collision_circle()):
@@ -91,6 +91,7 @@ class Chunk:
 
     def render_weapons(self, screen, camera: Camera):
         for weapon in self._weapons:
+            print(f"rendering a weapon at pos: {weapon.position}")
             weapon.render(screen, camera)
 
     def add_weapon(self, weapon: Weapon):
