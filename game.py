@@ -64,8 +64,7 @@ class Game:
         self.keys: pygame.key.ScancodeWrapper
 
         self.weapons = Weapons()
-
-        self.player.weapon = self.weapons.gun
+        self._spawn_weapons()
 
     def _init_pygame(self):
         pygame.init()
@@ -96,6 +95,13 @@ class Game:
         self.world.render_chunk_outlines(self.screen)
 
         pygame.display.flip()
+
+    def _spawn_weapons(self):
+        for weapon in self.weapons.as_list():
+            chunk = self.world.random_chunk()
+            wc = weapon.copy()
+            wc.position = chunk.random_pos()
+            chunk.add_weapon(wc)
 
     def _update_weapons(self):
         ccs = [enemy.collision_circle() for enemy in self.enemies]
@@ -149,8 +155,8 @@ class Game:
 
     def _spawn_enemies(self) -> list[Enemy]:
         enemies = []
+        w, h = self.world.size()
         for _ in range(10):
-            w, h = self.world.dimensions()
             xpos = random.randint(0, w)
             ypos = random.randint(0, h)
             enemies.append(

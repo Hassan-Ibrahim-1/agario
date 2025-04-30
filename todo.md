@@ -26,6 +26,7 @@ respawn food
 main menu
 Audio
 parasites
+game over mechanic
 
 limits on splitting
 limits on player size
@@ -47,3 +48,7 @@ Weapons
     weapon pick ups
 
 Weapon pick ups
+    -- each chunk has its own weapons list
+    spawn random weapons in random chunks
+    when a player collides with a weapon, give it to that player
+    being able to drop weapons as a player

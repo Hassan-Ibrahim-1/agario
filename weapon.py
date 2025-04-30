@@ -1,5 +1,5 @@
 import pygame, time
-from enum import Enum
+from enum import Enum, auto
 from pygame import Vector2
 
 from pygame import Color
@@ -11,7 +11,7 @@ from timer import Timer
 
 
 class Effect(Enum):
-    SLOW_DOWN = 0
+    SLOW_DOWN = auto()
 
     # how long in seconds the effect lasts for
     def duration(self) -> float:
@@ -49,6 +49,8 @@ class Bullet:
 
 
 class Weapon:
+    PICKUP_RADIUS = 20
+
     def __init__(
         self,
         pos: Vector2,
@@ -137,3 +139,16 @@ class Weapon:
 
     def delete_bullet(self, i: int):
         del self.bullets[i]
+
+    def copy(self) -> "Weapon":
+        return Weapon(
+            self.position.copy(),
+            self.effect,
+            self.fire_rate,
+            self.ammo,
+            self.texture,
+        )
+
+    # used for pick ups
+    def collision_circle(self) -> CollisionCircle:
+        return CollisionCircle(self.position.copy(), self.PICKUP_RADIUS)

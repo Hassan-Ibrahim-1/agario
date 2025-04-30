@@ -2,11 +2,12 @@ import random
 
 import pygame
 from food import Food
-from game import utils
 from hud import Hud
 from player import Player
+from camera import Camera
 from pygame import Vector2, Color
 from utils import Bounds
+from weapon import Weapon
 
 colors = [
     Color(255, 0, 0),  # red
@@ -34,21 +35,19 @@ class Chunk:
         self.width = self.CHUNK_SIZE
         self.height = self.CHUNK_SIZE
         self.food: list[Food] = []
-        self.player = player
+        self._player = player
+        self._weapons: list[Weapon] = []
 
     def contains_player(self) -> bool:
-        px = self.player.position.x
-        py = self.player.position.y
+        px = self._player.position.x
+        py = self._player.position.y
 
-        if (
+        return (
             px >= self.position.x
             and px <= self.position.x + self.width
             and py >= self.position.y
             and py <= self.position.y + self.height
-        ):
-            return True
-
-        return False
+        )
 
     # returns a point in the chunk
     def random_pos(self) -> Vector2:
@@ -59,13 +58,13 @@ class Chunk:
 
     def update(self, screen):
         food_to_remove: list[int] = []
-        collision_circles = self.player.collision_circles()
+        collision_circles = self._player.collision_circles()
         for i, food in enumerate(self.food):
             food_eaten = False
             fcc = food.collision_circle()
             for cc in collision_circles:
                 if cc.is_colliding_with(fcc):
-                    self.player.size = (self.player.size**2 + food.radius**2) ** 0.5
+                    self._player.size = (self._player.size**2 + food.radius**2) ** 0.5
                     food_to_remove.append(i)
                     food_eaten = True
                     break
@@ -74,15 +73,22 @@ class Chunk:
                 else:
                     fcc.radius = self.FOOD_ATTRACTION_RADIUS
                     if cc.is_colliding_with(fcc):
-                        dir = (self.player.position - food.position).normalize()
+                        dir = (self._player.position - food.position).normalize()
                         food.position += dir * self.FOOD_ATTRACTION
 
             if not food_eaten:
-                food.render(screen, self.player.camera)
+                food.render(screen, self._player.camera)
 
         # go in reverse order to avoid skipping over elements
         for i in sorted(food_to_remove, reverse=True):
             del self.food[i]
+
+    def render_weapons(self, screen, camera: Camera):
+        for weapon in self._weapons:
+            weapon.render(screen, camera)
+
+    def add_weapon(self, weapon: Weapon):
+        self._weapons.append(weapon)
 
     def spawn_food(self, n_food: int):
         if len(self.food) >= self.MAX_FOOD_PER_CHUNK:
@@ -120,6 +126,7 @@ class World:
     def update(self, screen):
         for chunk in self.get_render_chunks(screen):
             chunk.update(screen)
+            chunk.render_weapons(screen, self.player.camera)
         self.hud.render(self.player)
 
     # get the chunk that the player is in and the 9 surrounding chunks
@@ -183,6 +190,9 @@ class World:
         return Bounds(Vector2(0, 0), s, s)
 
     # returns width, height
-    def dimensions(self) -> tuple[int, int]:
+    def size(self) -> tuple[int, int]:
         s = self.CHUNKS_PER_AXIS * Chunk.CHUNK_SIZE
         return s, s
+
+    def random_chunk(self) -> Chunk:
+        return random.choice(self.chunks)
