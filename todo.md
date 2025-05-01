@@ -12,7 +12,6 @@ Arthur
 -- Food absorb animation
 -- Special abilities and weapons
 -- blobs grow individually
-biomes
 enemies can consume food
 more weapon effects
 text that shows when a player can pickup a weapon
