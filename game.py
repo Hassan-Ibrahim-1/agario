@@ -136,6 +136,9 @@ class Game:
             if idx is not None:
                 enemies_to_effect.append((weapon.effect, idx))
 
+        for effect, i in enemies_to_effect:
+            self.enemies[i].set_effect(effect)
+
     def _handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEWHEEL:
