@@ -80,8 +80,7 @@ class Game:
         self.keys: pygame.key.ScancodeWrapper
 
         self.weapons = Weapons()
-        self.player.weapon = self.weapons.gun.copy()
-        # self._spawn_weapons()
+        self._spawn_weapons()
 
     def _init_pygame(self):
         pygame.init()
@@ -165,14 +164,15 @@ class Game:
         pygame.quit()
 
     def _update_enemies(self):
-        collision_circles = self.player.collision_circles()
+        player_collision_circles = self.player.collision_circles()
         enemies_to_remove: set[int] = set()
         for i, enemy in enumerate(self.enemies):
             update_enemy = True
-            for cc in collision_circles:
+            for j, cc in enumerate(player_collision_circles):
                 if cc.is_colliding_with(enemy.collision_circle()):
-                    if enemy.size < self.player.size:
-                        self.player.size = (self.player.size**2 + enemy.size**2) ** 0.5
+                    blob = self.player.blobs[j]
+                    if enemy.size < blob.size:
+                        blob.size = (blob.size**2 + enemy.size**2) ** 0.5
                         enemies_to_remove.add(i)
                         update_enemy = False
                     else:

@@ -62,9 +62,10 @@ class Chunk:
         for i, food in enumerate(self.food):
             food_eaten = False
             fcc = food.collision_circle()
-            for cc in player_collision_circles:
+            for j, cc in enumerate(player_collision_circles):
                 if cc.is_colliding_with(fcc):
-                    self._player.size = (self._player.size**2 + food.radius**2) ** 0.5
+                    # self._player.size = (self._player.size**2 + food.radius**2) ** 0.5
+                    self._player.blobs[j].eat_food(food)
                     food_to_remove.append(i)
                     food_eaten = True
                     break
@@ -108,7 +109,11 @@ class Chunk:
 
         for _ in range(n_food):
             self.food.append(
-                Food(self.random_pos(), random.randint(5, 20), random.choice(colors))
+                Food(
+                    self.random_pos(),
+                    random.randint(5, 20),
+                    random.choice(colors),
+                )
             )
 
 
