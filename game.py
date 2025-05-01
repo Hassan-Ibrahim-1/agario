@@ -104,7 +104,7 @@ class Game:
 
         # player has to be updated before world for weapon pickup reasons
         self.player.update(self.screen, self.keys, self.dt)
-        self.world.update(self.screen)
+        self.world.update(self.screen, self.enemies)
         self._update_enemies()
 
         self.player.render(self.screen)

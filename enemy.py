@@ -1,6 +1,7 @@
 from pygame import Vector2, Color
 from collision_circle import CollisionCircle
 import pygame
+from food import Food
 from weapon import Effect
 from typing import Optional
 
@@ -46,3 +47,6 @@ class Enemy:
 
     def collision_circle(self) -> CollisionCircle:
         return CollisionCircle(self.position.copy(), self.size)
+
+    def eat_food(self, food: Food):
+        self.size = (self.size**2 + food.radius**2) ** 0.5
