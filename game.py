@@ -105,6 +105,8 @@ class Game:
         # player has to be updated before world for weapon pickup reasons
         self.player.update(self.screen, self.keys, self.dt)
         self.world.update(self.screen, self.enemies)
+        if self.player.weapon is not None:
+            self._update_player_weapon()
         self._update_enemies()
 
         self.player.render(self.screen)
@@ -128,13 +130,14 @@ class Game:
         base_weapon.position = weapon.position
         self._spawn_weapon(base_weapon.copy())
 
-    def _update_weapons(self):
+    # applies effects to enemies if any bullet collides with them
+    def _update_player_weapon(self):
+        assert self.player.weapon is not None
         ccs = [enemy.collision_circle() for enemy in self.enemies]
         enemies_to_effect: list[tuple[Effect, int]] = []
-        for weapon in self.weapons.as_list():
-            idx = weapon.check_collision(ccs)
-            if idx is not None:
-                enemies_to_effect.append((weapon.effect, idx))
+        idx = self.player.weapon.check_collision(ccs)
+        if idx is not None:
+            enemies_to_effect.append((self.player.weapon.effect, idx))
 
         for effect, i in enemies_to_effect:
             self.enemies[i].set_effect(effect)

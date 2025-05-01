@@ -80,6 +80,8 @@ class Chunk:
                         food.position += dir * self.FOOD_ATTRACTION
 
             for j, cc in enumerate(enemy_collision_circles):
+                if i in food_to_remove:
+                    continue
                 if cc.is_colliding_with(fcc):
                     enemies[j].eat_food(food)
                     food_to_remove.append(i)

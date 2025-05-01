@@ -1,4 +1,4 @@
-import pygame, time
+import pygame
 from enum import Enum, auto
 from pygame import Vector2
 
@@ -134,7 +134,6 @@ class Weapon:
         for i, cc in enumerate(collision_circles):
             for j, bullet in enumerate(self.bullets):
                 if bullet.collision_circle().is_colliding_with(cc):
-                    print("deleting bullet")
                     self.delete_bullet(j)
                     return i
         return None
