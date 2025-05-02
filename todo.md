@@ -6,6 +6,9 @@ Matthew
     limit on blob count
     reabsorb blobs at some point
     respawn food
+    redo camera target / player.position 
+        when all but one of a players blobs are eaten camera target / player.postion
+        messes up and stuff like food attracting also gets bugged.
 
 Arthur
     add more weapons and effects
@@ -19,6 +22,6 @@ Arthur
 -- blobs grow individually
 -- enemies can consume food
 
-gameover mechanic
+-- gameover mechanic
 main menu
 

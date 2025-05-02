@@ -108,6 +108,10 @@ class Game:
         if self.player.weapon is not None:
             self._apply_player_weapon_effects()
         self._update_enemies()
+        if len(self.player.blobs) <= 0:
+            self.running = False
+            print("game over")
+            return
 
         self.player.render(self.screen)
         self.world.render_chunk_outlines(self.screen)
@@ -171,6 +175,7 @@ class Game:
     def _update_enemies(self):
         player_collision_circles = self.player.collision_circles()
         enemies_to_remove: set[int] = set()
+        blobs_to_remove: set[int] = set()
         for i, enemy in enumerate(self.enemies):
             update_enemy = True
             for j, cc in enumerate(player_collision_circles):
@@ -181,7 +186,8 @@ class Game:
                         enemies_to_remove.add(i)
                         update_enemy = False
                     else:
-                        self.player.health -= Enemy.ENEMY_DAMAGE
+                        enemy.eat_blob(blob)
+                        blobs_to_remove.add(j)
                     break
 
             if update_enemy:
@@ -190,6 +196,10 @@ class Game:
 
         for i in sorted(enemies_to_remove, reverse=True):
             del self.enemies[i]
+
+        for i in sorted(blobs_to_remove, reverse=True):
+            print(f"blob: {i}")
+            del self.player.blobs[i]
 
     def _spawn_enemies(self) -> list[Enemy]:
         enemies = []

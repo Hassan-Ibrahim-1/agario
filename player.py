@@ -162,7 +162,6 @@ class Player:
         self.size: int = self.STARTING_SIZE
         self.acceleration: int = 500
         self.color = color
-        self.health = self.MAX_HEALTH
         self.growth_rate = 1
         self.last_split: float = 0
         self.camera = Camera(self.position)
