@@ -130,7 +130,7 @@ class Chunk:
 
 
 class World:
-    CHUNKS_PER_AXIS = 1
+    CHUNKS_PER_AXIS = 9
 
     def __init__(self, screen, player: Player) -> None:
         self.chunks: list[Chunk] = []

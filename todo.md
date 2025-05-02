@@ -7,6 +7,7 @@ Matthew
     reabsorb blobs at some point
     respawn food
     redo camera target / player.position 
+        try splitting into multiple blobs first
         when all but one of a players blobs are eaten camera target / player.postion
         messes up and stuff like food attracting also gets bugged.
 
@@ -15,6 +16,9 @@ Arthur
     text that shows when a player can pickup a weapon
     Audio
     parasites
+    redo the Player.score function
+        it just displays zero right now
+    add a main menu background
 
 -- Score counter
 -- Food absorb animation
@@ -23,5 +27,6 @@ Arthur
 -- enemies can consume food
 
 -- gameover mechanic
-main menu
-
+-- main menu
+prevent player from going out of bounds
+don't spawn enemies in player starting chunk

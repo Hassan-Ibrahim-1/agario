@@ -13,7 +13,7 @@ class Enemy:
     ENEMY_DAMAGE = 10
 
     def __init__(
-        self, pos: Vector2, size: int, color: Color, velocity: float = 15
+        self, pos: Vector2, size: int, color: Color, velocity: float = 40
     ) -> None:
         self.position = pos
         self.velocity = velocity

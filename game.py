@@ -2,6 +2,7 @@ import pygame
 import random
 from pygame import Vector2, Color
 from enemy import Enemy
+from menu import Menu
 from player import Player
 from texture import Texture
 from weapon import Effect, Weapon
@@ -50,7 +51,6 @@ class Game:
         self._init_pygame()
 
         self.dt: float = 0
-        self.zoom: float = 1
 
         self.colors = [
             Color(255, 0, 0),  # red
@@ -65,7 +65,10 @@ class Game:
         ]
 
         self.font = pygame.font.SysFont(None, 24)
+        self._reset()
 
+    def _reset(self):
+        self.zoom: float = 1
         self.player = Player(
             Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2),
             random.choice(self.colors),
@@ -82,6 +85,15 @@ class Game:
         self.weapons = Weapons()
         self._spawn_weapons()
 
+        self.in_menu = True
+        center = Vector2(
+            self.screen.get_width() // 2,
+            self.screen.get_height() // 2,
+        )
+        self.menu = Menu(self.font, center)
+
+        self.running = True
+
     def _init_pygame(self):
         pygame.init()
         self.screen = pygame.display.set_mode(
@@ -92,16 +104,39 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def run(self):
-        self.running = True
-
         while self.running:
-            self._update()
+            self._start_frame()
 
-    def _update(self):
+            if self.in_menu:
+                self._update_menu()
+            else:
+                self._update()
+
+            self._end_frame()
+
+    def _update_menu(self):
+        self.menu.update()
+
+        for button in self.menu.buttons:
+            if button.is_pressed():
+                if button.name == "play":
+                    self.in_menu = False
+
+                if button.name == "quit":
+                    self.running = False
+
+                return
+        self.menu.render(self.screen)
+
+    def _start_frame(self):
         self.dt = self.clock.tick(60) / 1000
         self._handle_events()
         self.screen.fill("white")
 
+    def _end_frame(self):
+        pygame.display.flip()
+
+    def _update(self):
         # player has to be updated before world for weapon pickup reasons
         self.player.update(self.screen, self.keys, self.dt)
         self.world.update(self.screen, self.enemies)
@@ -109,14 +144,11 @@ class Game:
             self._apply_player_weapon_effects()
         self._update_enemies()
         if len(self.player.blobs) <= 0:
-            self.running = False
-            print("game over")
+            self._reset()
             return
 
         self.player.render(self.screen)
-        self.world.render_chunk_outlines(self.screen)
-
-        pygame.display.flip()
+        # self.world.render_chunk_outlines(self.screen)
 
     def _spawn_weapons(self):
         for weapon in self.weapons.as_list():
@@ -198,13 +230,12 @@ class Game:
             del self.enemies[i]
 
         for i in sorted(blobs_to_remove, reverse=True):
-            print(f"blob: {i}")
             del self.player.blobs[i]
 
     def _spawn_enemies(self) -> list[Enemy]:
         enemies = []
         w, h = self.world.size()
-        for _ in range(10):
+        for _ in range(50):
             xpos = random.randint(0, w)
             ypos = random.randint(0, h)
             enemies.append(
