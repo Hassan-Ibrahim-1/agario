@@ -286,8 +286,8 @@ class Player:
 
         return circles
 
-    # TODO: fix this calculation
-    # maybe have a dedicated variable
     def score(self) -> int:
-        size = self.size * len(self.blobs)
+        size = 0
+        for b in self.blobs:
+            size += b.size
         return size - self.STARTING_SIZE
