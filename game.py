@@ -110,7 +110,6 @@ class Game:
         self._update_enemies()
 
         self.player.render(self.screen)
-        self.player.render_bar(self.screen)
         self.world.render_chunk_outlines(self.screen)
 
         pygame.display.flip()

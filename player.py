@@ -9,7 +9,6 @@ from food import Food
 
 import utils
 
-from bar import Bar
 from camera import Camera
 from collision_circle import CollisionCircle
 
@@ -164,7 +163,6 @@ class Player:
         self.acceleration: int = 500
         self.color = color
         self.health = self.MAX_HEALTH
-        self.bar = Bar(Vector2(100, 100), Color(0, 0, 0), Color(255, 0, 0), 100, 20)
         self.growth_rate = 1
         self.last_split: float = 0
         self.camera = Camera(self.position)
@@ -280,9 +278,6 @@ class Player:
 
         if self.weapon is not None:
             self._render_weapon(screen)
-
-    def render_bar(self, screen: Surface):
-        self.bar.render(screen, self.health / self.MAX_HEALTH)
 
     # returns a list of collision circles of all player blobs
     def collision_circles(self) -> list[CollisionCircle]:
