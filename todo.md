@@ -27,8 +27,6 @@ Arthur
     - text that shows when a player can pickup a weapon
     - Audio
     - parasites
-    - redo the Player.score function
-        it just displays zero right now
     - add a main menu background
 
 -- Score counter
