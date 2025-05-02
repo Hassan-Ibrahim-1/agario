@@ -13,6 +13,14 @@ class Bounds:
             p.y > self.top_left.y and p.y < self.top_left.y + self.height
         )
 
+    def contains_circle(self, center: Vector2, radius: int) -> bool:
+        return (
+            center.x - radius >= self.top_left.x
+            and center.x + radius <= self.top_left.x + self.width
+            and center.y - radius >= self.top_left.y
+            and center.y + radius <= self.top_left.y + self.height
+        )
+
 
 def mouse_pos() -> Vector2:
     x, y = pygame.mouse.get_pos()

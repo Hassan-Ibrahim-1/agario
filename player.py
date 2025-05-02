@@ -36,9 +36,13 @@ class Blob:
         dt: float,
         blobs: list["Blob"],
         center_of_mass: Vector2,
+        bounds: Bounds,
     ):
         speed += self._cohesion_force(center_of_mass)
+        start_pos = self.position.copy()
         self.position += speed * dt
+        if not bounds.contains_circle(self.position, self.size):
+            self.position = start_pos
 
         for other in blobs:
             if other is self:
@@ -52,8 +56,16 @@ class Blob:
                 overlap = min_dist - dist
                 push_dir = delta.normalize()
 
+                start_pos = self.position.copy()
                 self.position += push_dir * (overlap / 2)
+
+                if not bounds.contains_circle(self.position, self.size):
+                    self.position = start_pos
+
+                other_start_pos = other.position.copy()
                 other.position -= push_dir * (overlap / 2)
+                if not bounds.contains_circle(other.position, other.size):
+                    other.position = other_start_pos
 
     def eat_food(self, food: Food):
         self.size = (self.size**2 + food.radius**2) ** 0.5
@@ -222,9 +234,20 @@ class Player:
 
         center_of_mass = self._calculate_center_of_mass()
         for blob in self.blobs:
-            blob.update(self.speed.copy(), dt, self.blobs, center_of_mass)
+            blob.update(
+                self.speed.copy(),
+                dt,
+                self.blobs,
+                center_of_mass,
+                self.bounds,
+            )
 
+        start_pos = self.position.copy()
         self.position += self.speed * dt
+        self.position = self._calculate_center_of_mass()
+
+        if not self.bounds.contains_circle(self.position, self.size):
+            self.position = start_pos
 
         if self.weapon is not None:
             if self.weapon.ammo <= 0:
