@@ -13,6 +13,10 @@ Matthew
         also remove player.position since its not needed any more
         but try and figure out what to set the camera target to.
 
+        camera currently works by tracking player.position, but the blobs
+        each have their own position. it should track something like their center of mass
+        instead of player.position which can be offset in weird ways
+
     - auto zoom
     - limit on blob count
     - reabsorb blobs at some point
