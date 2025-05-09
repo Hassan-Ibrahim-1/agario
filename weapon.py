@@ -13,6 +13,7 @@ from typing import Optional
 
 class Effect(Enum):
     SLOW_DOWN = auto()
+    DAMAGE = auto()
 
     # how long in seconds the effect lasts for
     def duration(self) -> float:
@@ -153,3 +154,4 @@ class Weapon:
     # used for pick ups
     def collision_circle(self) -> CollisionCircle:
         return CollisionCircle(self.position.copy(), self.PICKUP_RADIUS)
+    

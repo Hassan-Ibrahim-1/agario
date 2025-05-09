@@ -39,6 +39,8 @@ class Enemy:
             else:
                 if self._effect == Effect.SLOW_DOWN:
                     vel *= self._effect.slowdown_factor()
+                elif self._effect == Effect.DAMAGE:
+                    self.size -= 10
                 self._effect_duration -= dt
 
         v = dir.normalize() * vel * dt

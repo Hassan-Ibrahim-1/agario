@@ -11,18 +11,27 @@ from typing import Optional
 
 class Weapons:
     def __init__(self):
-        self.gun = Weapon(
+        self.glock = Weapon(
             Vector2(0, 0),
             Effect.SLOW_DOWN,
             4,
-            10,
+            8,
             Texture("textures/gun.webp"),
         )
-        self.gun.texture.scale = Vector2(0.1, 0.1)
+        self.glock.texture.scale = Vector2(0.1, 0.1)
+
+        self.raygun = Weapon(
+            Vector2(0, 0),
+            Effect.DAMAGE,
+            1,
+            4,
+            Texture("textures/raygunpng.webp"),
+        )
+        self.raygun.texture.scale = Vector2(0.2, 0.2)
 
     def as_list(self) -> list[Weapon]:
         return [
-            self.gun,
+            self.glock, self.raygun
         ]
 
     def find_equivalent_weapon(self, other: Weapon) -> Optional[Weapon]:
