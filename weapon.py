@@ -1,4 +1,4 @@
-import pygame, time
+import pygame
 from enum import Enum, auto
 from pygame import Vector2
 

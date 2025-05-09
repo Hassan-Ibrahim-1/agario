@@ -1,6 +1,8 @@
 from pygame import Vector2, Color
 from collision_circle import CollisionCircle
 import pygame
+from food import Food
+from player import Blob
 from weapon import Effect
 from typing import Optional
 
@@ -11,7 +13,7 @@ class Enemy:
     ENEMY_DAMAGE = 10
 
     def __init__(
-        self, pos: Vector2, size: int, color: Color, velocity: float = 15
+        self, pos: Vector2, size: int, color: Color, velocity: float = 40
     ) -> None:
         self.position = pos
         self.velocity = velocity
@@ -48,3 +50,9 @@ class Enemy:
 
     def collision_circle(self) -> CollisionCircle:
         return CollisionCircle(self.position.copy(), self.size)
+
+    def eat_food(self, food: Food):
+        self.size = (self.size**2 + food.radius**2) ** 0.5
+
+    def eat_blob(self, blob: Blob):
+        self.size = (self.size**2 + blob.size**2) ** 0.5

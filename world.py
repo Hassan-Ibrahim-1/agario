@@ -8,6 +8,7 @@ from camera import Camera
 from pygame import Vector2, Color
 from utils import Bounds
 from weapon import Weapon
+from enemy import Enemy
 
 colors = [
     Color(255, 0, 0),  # red
@@ -56,9 +57,10 @@ class Chunk:
             random.randint(int(self.position.y), int(self.position.y + self.height)),
         )
 
-    def update(self, screen):
+    def update(self, screen, enemies: list[Enemy]):
         food_to_remove: list[int] = []
         player_collision_circles = self._player.collision_circles()
+        enemy_collision_circles = [enemy.collision_circle() for enemy in enemies]
         for i, food in enumerate(self.food):
             food_eaten = False
             fcc = food.collision_circle()
@@ -76,6 +78,16 @@ class Chunk:
                     if cc.is_colliding_with(fcc):
                         dir = (self._player.position - food.position).normalize()
                         food.position += dir * self.FOOD_ATTRACTION
+
+            for j, cc in enumerate(enemy_collision_circles):
+                if i in food_to_remove:
+                    continue
+
+                if cc.is_colliding_with(fcc):
+                    enemies[j].eat_food(food)
+                    food_to_remove.append(i)
+                    food_eaten = True
+                    break
 
             if not food_eaten:
                 food.render(screen, self._player.camera)
@@ -118,7 +130,7 @@ class Chunk:
 
 
 class World:
-    CHUNKS_PER_AXIS = 1
+    CHUNKS_PER_AXIS = 9
 
     def __init__(self, screen, player: Player) -> None:
         self.chunks: list[Chunk] = []
@@ -140,9 +152,9 @@ class World:
             chunk.spawn_food(100)
 
     # renders the hud as well
-    def update(self, screen):
+    def update(self, screen, enemies: list[Enemy]):
         for chunk in self.get_render_chunks(screen):
-            chunk.update(screen)
+            chunk.update(screen, enemies)
             chunk.render_weapons(screen, self.player.camera)
         self.hud.render(self.player)
 
