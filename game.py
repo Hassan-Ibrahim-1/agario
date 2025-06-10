@@ -158,6 +158,11 @@ class Game:
 
         self.player.render(self.screen)
         # self.world.render_chunk_outlines(self.screen)
+        self.player.camera.zoom = min(max(
+            self.player.camera.zoom,
+            self.player.camera.MIN_ZOOM * self.player.STARTING_SIZE / self.player.size),
+            self.player.camera.MAX_ZOOM * self.player.STARTING_SIZE / self.player.size
+        )
 
     def _spawn_weapons(self):
         for weapon in self.weapons.as_list():
@@ -190,12 +195,11 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEWHEEL:
                 self.player.camera.zoom += event.y * 0.05
-                self.player.camera.zoom = pygame.math.clamp(
+                self.player.camera.zoom = min(max(
                     self.player.camera.zoom,
-                    self.player.camera.MIN_ZOOM,
-                    self.player.camera.MAX_ZOOM,
+                    self.player.camera.MIN_ZOOM * self.player.STARTING_SIZE / self.player.size),
+                    self.player.camera.MAX_ZOOM * self.player.STARTING_SIZE / self.player.size
                 )
-
             elif event.type == pygame.QUIT:
                 self.running = False
 
@@ -245,8 +249,8 @@ class Game:
         enemies = []
         w, h = self.world.size()
         for _ in range(50):
-            xpos = random.randint(0, w)
-            ypos = random.randint(0, h)
+            xpos = random.randint(1000, w)
+            ypos = random.randint(1000, h)
             enemies.append(
                 Enemy(
                     Vector2(xpos, ypos),
