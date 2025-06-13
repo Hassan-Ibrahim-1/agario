@@ -10,6 +10,7 @@ from weapon import Effect, Weapon
 from world import World
 from typing import Optional
 
+
 class Weapons:
     def __init__(self):
         self.glock = Weapon(
@@ -222,9 +223,7 @@ class Game:
         player_collision_circles = self.player.collision_circles()
         enemies_to_remove: set[int] = set()
         blobs_to_remove: set[int] = set()
-        
-        
-        
+
         for j, cc in enumerate(player_collision_circles):
             for i, virus in enumerate(self.viruses):
                 if cc.is_colliding_with(virus.collision_circle()):
@@ -235,7 +234,7 @@ class Game:
                     self.player._split()
 
                 virus.render(self.screen, self.player.camera)
-            
+
             for i, enemy in enumerate(self.enemies):
                 update_enemy = True
                 if cc.is_colliding_with(enemy.collision_circle()):
@@ -244,6 +243,14 @@ class Game:
                         blob.size = (blob.size**2 + enemy.size**2) ** 0.5
                         enemies_to_remove.add(i)
                         update_enemy = False
+                        w,h = self.world.size()
+                        self.enemies.append(
+                            Enemy(
+                                Vector2(random.randint(1000, w) , random.randint(1000, h)),
+                                random.randint(int(self.player.size // 2), int(self.player.size * 1.5)),
+                                random.choice(self.colors),
+                            )
+                        )
                     else:
                         enemy.eat_blob(blob)
                         blobs_to_remove.add(j)
@@ -274,11 +281,11 @@ class Game:
             )
 
         return enemies
-    
+
     def _spawn_viruses(self) -> list[Enemy]:
         viruses = []
         w, h = self.world.size()
-        for _ in range(50):
+        for _ in range(20):
             xpos = random.randint(1000, w)
             ypos = random.randint(1000, h)
             viruses.append(
