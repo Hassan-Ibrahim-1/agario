@@ -158,6 +158,7 @@ class Player:
     # in s
     SPLIT_COOLDOWN = 0.5
     SMALLEST_BLOB_REABSORBTION_TIME = 3600
+    VIRUS_COOLDOWN = 240
 
     def __init__(self, pos: Vector2, color: Color) -> None:
         self.speed = Vector2(0, 0)
@@ -177,6 +178,8 @@ class Player:
         # required to pick up a weapon is pressed
         self.can_pickup_weapon = False
         self.weapon_discard_callback: Optional[Callable[[Weapon], None]] = None
+        
+        self.frames_since_last_virus = 0
 
         self.blobs: list[Blob] = [
             Blob(
@@ -188,6 +191,8 @@ class Player:
         ]
 
     def update(self, screen, keys: ScancodeWrapper, dt: float):
+        self.frames_since_last_virus += 1
+        
         moving = False
         if keys[pygame.K_w]:
             self.speed.y -= self.acceleration * dt
