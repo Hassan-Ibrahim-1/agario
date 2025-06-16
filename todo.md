@@ -27,8 +27,17 @@ Matthew
     - don't spawn enemies in player starting chunk | KINDA DONE
 
 Arthur
-    - add more weapons and effects
     - text that shows when a player can pickup a weapon
     - Audio
     - parasites
     - add a main menu background
+<<<<<<< HEAD
+
+-- Food absorb animation
+-- Special abilities and weapons
+-- enemies can consume food
+
+-- gameover mechanic
+-- main menu
+=======
+>>>>>>> 5eb7fd355416b6c30b89f9f70e736ac2379ad24f
