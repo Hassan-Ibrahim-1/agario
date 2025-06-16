@@ -39,6 +39,8 @@ class Blob:
     ):
         speed += self._cohesion_force(center_of_mass)
         self.position += speed * dt
+        self.position.x = min(max(self.position.x, 0), 9000)
+        self.position.y = min(max(self.position.y, 0), 9000)
 
         for other in blobs:
             if other is self:
@@ -153,8 +155,10 @@ class Player:
     MAX_HEALTH = 100
     # should be an even number
     MAX_BLOBS = 6
-    # in ms
+    # in s
     SPLIT_COOLDOWN = 0.5
+    SMALLEST_BLOB_REABSORBTION_TIME = 3600
+    VIRUS_COOLDOWN = 240
 
     def __init__(self, pos: Vector2, color: Color) -> None:
         self.speed = Vector2(0, 0)
@@ -166,12 +170,16 @@ class Player:
         self.last_split: float = 0
         self.camera = Camera(self.position)
         self.weapon: Optional[Weapon] = None
+        self.smallest_blob = 0
+        self.smallest_blob_timer = 0
         # place holder value
         self.bounds = Bounds(Vector2(0, 0), 0, 0)
         # hacky way of communicating to World that the key
         # required to pick up a weapon is pressed
         self.can_pickup_weapon = False
         self.weapon_discard_callback: Optional[Callable[[Weapon], None]] = None
+        
+        self.frames_since_last_virus = 0
 
         self.blobs: list[Blob] = [
             Blob(
@@ -183,6 +191,8 @@ class Player:
         ]
 
     def update(self, screen, keys: ScancodeWrapper, dt: float):
+        self.frames_since_last_virus += 1
+        
         moving = False
         if keys[pygame.K_w]:
             self.speed.y -= self.acceleration * dt
@@ -220,11 +230,37 @@ class Player:
         if not moving:
             self.speed = Vector2(0, 0)
 
-        center_of_mass = self._calculate_center_of_mass()
-        for blob in self.blobs:
-            blob.update(self.speed.copy(), dt, self.blobs, center_of_mass)
+        # REABSORBTION
+        new_smallest = 0
+        current_min_size = math.inf
+        for i in range(len(self.blobs)):
+            if self.blobs[i].size < current_min_size:
+                new_smallest = i
+                current_min_size = self.blobs[i].size
+        if new_smallest == self.smallest_blob and len(self.blobs) > 1:
+            self.smallest_blob_timer += 1
+        else:
+            self.smallest_blob_timer = 0
+            self.smallest_blob = new_smallest
 
-        self.position += self.speed * dt
+        if self.smallest_blob_timer > self.SMALLEST_BLOB_REABSORBTION_TIME:
+            self.blobs[(self.smallest_blob + 1) % len(self.blobs)].size += self.blobs[
+                self.smallest_blob
+            ].size
+            self.blobs.pop(self.smallest_blob)
+
+        self.size = 0
+        for blob in self.blobs:
+            self.size += blob.size
+
+        scaled_speed = self.speed * (self.STARTING_SIZE / self.size) ** 0.5
+
+        center_of_mass = self._calculate_center_of_mass()
+        self.position.x = center_of_mass.x
+        self.position.y = center_of_mass.y
+
+        for blob in self.blobs:
+            blob.update(scaled_speed, dt, self.blobs, center_of_mass)
 
         if self.weapon is not None:
             if self.weapon.ammo <= 0:
@@ -237,9 +273,9 @@ class Player:
     def _calculate_center_of_mass(self) -> Vector2:
         center = Vector2(0, 0)
         for blob in self.blobs:
-            center += blob.position
+            center += blob.size * blob.position
 
-        return center / len(self.blobs)
+        return center / self.size
 
     def _update_weapon(self, screen, dt: float):
         assert self.weapon is not None
@@ -257,6 +293,8 @@ class Player:
         self.weapon.render(screen, self.camera)
 
     def _split(self):
+        if len(self.blobs) >= self.MAX_BLOBS:
+            return
         new_blobs: list[Blob] = []
         for blob in self.blobs:
             new_blob_count = len(new_blobs)

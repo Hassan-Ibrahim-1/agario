@@ -2,6 +2,7 @@ import pygame
 import random
 from pygame import Vector2, Color
 from enemy import Enemy
+from virus import Virus
 from menu import Menu
 from player import Player
 from texture import Texture
@@ -101,6 +102,7 @@ class Game:
         self.player.bounds = self.world.bounds()
 
         self.enemies = self._spawn_enemies()
+        self.viruses = self._spawn_viruses()
         self.running = False
         self.keys: pygame.key.ScancodeWrapper
 
@@ -173,6 +175,11 @@ class Game:
         
         self.player.render(self.screen)
         # self.world.render_chunk_outlines(self.screen)
+        self.player.camera.zoom = min(max(
+            self.player.camera.zoom,
+            self.player.camera.MIN_ZOOM * self.player.STARTING_SIZE / self.player.size),
+            self.player.camera.MAX_ZOOM * self.player.STARTING_SIZE / self.player.size
+        )
 
     def _spawn_weapons(self):
         for weapon in self.weapons.as_list():
@@ -205,12 +212,11 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.MOUSEWHEEL:
                 self.player.camera.zoom += event.y * 0.05
-                self.player.camera.zoom = pygame.math.clamp(
+                self.player.camera.zoom = min(max(
                     self.player.camera.zoom,
-                    self.player.camera.MIN_ZOOM,
-                    self.player.camera.MAX_ZOOM,
+                    self.player.camera.MIN_ZOOM * self.player.STARTING_SIZE / self.player.size),
+                    self.player.camera.MAX_ZOOM * self.player.STARTING_SIZE / self.player.size
                 )
-
             elif event.type == pygame.QUIT:
                 self.running = False
 
@@ -232,23 +238,42 @@ class Game:
         player_collision_circles = self.player.collision_circles()
         enemies_to_remove: set[int] = set()
         blobs_to_remove: set[int] = set()
-        for i, enemy in enumerate(self.enemies):
-            update_enemy = True
-            for j, cc in enumerate(player_collision_circles):
+
+        for j, cc in enumerate(player_collision_circles):
+            for i, virus in enumerate(self.viruses):
+                if cc.is_colliding_with(virus.collision_circle()):
+                    self.player.frames_since_last_virus = 0
+                    blob = self.player.blobs[j]
+                    diff = self.player.position - virus.position
+                    self.player.speed = diff.normalize() * 20000
+                    self.player._split()
+
+                virus.render(self.screen, self.player.camera)
+
+            for i, enemy in enumerate(self.enemies):
+                update_enemy = True
                 if cc.is_colliding_with(enemy.collision_circle()):
                     blob = self.player.blobs[j]
                     if enemy.size < blob.size:
                         blob.size = (blob.size**2 + enemy.size**2) ** 0.5
                         enemies_to_remove.add(i)
                         update_enemy = False
+                        w,h = self.world.size()
+                        self.enemies.append(
+                            Enemy(
+                                Vector2(random.randint(1000, w) , random.randint(1000, h)),
+                                random.randint(int(self.player.size // 2), int(self.player.size * 1.5)),
+                                random.choice(self.colors),
+                            )
+                        )
                     else:
                         enemy.eat_blob(blob)
                         blobs_to_remove.add(j)
                     break
 
-            if update_enemy:
-                enemy.render(self.screen, self.player.camera)
-                enemy.update(self.player.position, self.dt)
+                if update_enemy:
+                    enemy.render(self.screen, self.player.camera)
+                    enemy.update(self.player.position, self.dt)
 
         for i in sorted(enemies_to_remove, reverse=True):
             del self.enemies[i]
@@ -260,8 +285,8 @@ class Game:
         enemies = []
         w, h = self.world.size()
         for _ in range(50):
-            xpos = random.randint(0, w)
-            ypos = random.randint(0, h)
+            xpos = random.randint(1000, w)
+            ypos = random.randint(1000, h)
             enemies.append(
                 Enemy(
                     Vector2(xpos, ypos),
@@ -271,3 +296,18 @@ class Game:
             )
 
         return enemies
+
+    def _spawn_viruses(self) -> list[Enemy]:
+        viruses = []
+        w, h = self.world.size()
+        for _ in range(20):
+            xpos = random.randint(1000, w)
+            ypos = random.randint(1000, h)
+            viruses.append(
+                Virus(
+                    Vector2(xpos, ypos),
+                    random.randint(20, 80),
+                )
+            )
+
+        return viruses

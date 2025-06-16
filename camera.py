@@ -3,8 +3,8 @@ from pygame import Vector2, Surface
 
 class Camera:
     # dumb hard coded values
-    MIN_ZOOM = 0.2
-    MAX_ZOOM = 5
+    MIN_ZOOM = 0.8
+    MAX_ZOOM = 4
 
     def __init__(self, target: Vector2, zoom: float = 1) -> None:
         self.offset = Vector2(0, 0)

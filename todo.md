@@ -1,11 +1,11 @@
 # TODO
 
 Matthew
-    - bigger blobs move slower
+    - bigger blobs move slower | CHECK
         you'll have to remove player.position and rework camera.target
         to be able to do this because of the way the camera works rn
 
-    - redo camera target / player.position 
+    - redo camera target / player.position | CHECK
         try splitting into multiple blobs first
         when all but one of a players blobs are eaten camera target / player.postion
         messes up and stuff like food attracting also gets bugged.
@@ -17,20 +17,21 @@ Matthew
         each have their own position. it should track something like their center of mass
         instead of player.position which can be offset in weird ways
 
-    - auto zoom
-    - limit on blob count
-    - reabsorb blobs at some point
-    - respawn food
+    - auto zoom | AUTO CAP DONE
+    - limit on blob count | DONE, BUT BLOB SPLITTING SEEMS BROKEN
+    - reabsorb blobs at some point | DONE, SMALLEST BLOB REABSORBED AFTER A MINUTE
+    - respawn food | DONE
 
 
-    - prevent player from going out of bounds
-    - don't spawn enemies in player starting chunk
+    - prevent player from going out of bounds | KINDA DONE
+    - don't spawn enemies in player starting chunk | KINDA DONE
 
 Arthur
     - text that shows when a player can pickup a weapon
     - Audio
     - parasites
     - add a main menu background
+<<<<<<< HEAD
 
 -- Food absorb animation
 -- Special abilities and weapons
@@ -38,3 +39,5 @@ Arthur
 
 -- gameover mechanic
 -- main menu
+=======
+>>>>>>> 5eb7fd355416b6c30b89f9f70e736ac2379ad24f

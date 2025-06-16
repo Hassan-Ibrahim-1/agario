@@ -53,14 +53,17 @@ class Chunk:
     # returns a point in the chunk
     def random_pos(self) -> Vector2:
         return Vector2(
-            random.randint(int(self.position.x), int(self.position.x + self.width)),
-            random.randint(int(self.position.y), int(self.position.y + self.height)),
+            random.randint(int(self.position.x), int(
+                self.position.x + self.width)),
+            random.randint(int(self.position.y), int(
+                self.position.y + self.height)),
         )
 
-    def update(self, screen, enemies: list[Enemy]):
+    def update(self, screen, enemies: list[Enemy], respawn=False):
         food_to_remove: list[int] = []
         player_collision_circles = self._player.collision_circles()
-        enemy_collision_circles = [enemy.collision_circle() for enemy in enemies]
+        enemy_collision_circles = [enemy.collision_circle()
+                                   for enemy in enemies]
         for i, food in enumerate(self.food):
             food_eaten = False
             fcc = food.collision_circle()
@@ -76,7 +79,8 @@ class Chunk:
                 else:
                     fcc.radius = self.FOOD_ATTRACTION_RADIUS
                     if cc.is_colliding_with(fcc):
-                        dir = (self._player.position - food.position).normalize()
+                        dir = (self._player.position -
+                               food.position).normalize()
                         food.position += dir * self.FOOD_ATTRACTION
 
             for j, cc in enumerate(enemy_collision_circles):
@@ -108,6 +112,15 @@ class Chunk:
         for i in sorted(food_to_remove, reverse=True):
             del self.food[i]
 
+        if respawn and len(self.food) < self.MAX_FOOD_PER_CHUNK:
+            self.food.append(
+                Food(
+                    self.random_pos(),
+                    random.randint(5, 20),
+                    random.choice(colors),
+                )
+            )
+
     def render_weapons(self, screen, camera: Camera):
         for weapon in self._weapons:
             weapon.render(screen, camera)
@@ -130,12 +143,19 @@ class Chunk:
 
 
 class World:
+<<<<<<< HEAD
     CHUNKS_PER_AXIS = 5
         # change to 9 after testing
+=======
+    CHUNKS_PER_AXIS = 9
+    FOOD_RESPAWN_TIME = 60
+
+>>>>>>> 5eb7fd355416b6c30b89f9f70e736ac2379ad24f
     def __init__(self, screen, player: Player) -> None:
         self.chunks: list[Chunk] = []
         self.player = player
         self.hud = Hud(screen)
+        self.time = 0
 
         pos = Vector2(0, 0)
         for _ in range(self.CHUNKS_PER_AXIS):
@@ -144,7 +164,6 @@ class World:
                 self.chunks.append(Chunk(pos.copy(), player))
                 self.chunks[-1].spawn_food(Chunk.MAX_FOOD_PER_CHUNK)
                 pos.y += Chunk.CHUNK_SIZE
-                # print(pos)
 
             pos.x += Chunk.CHUNK_SIZE
 
@@ -153,8 +172,10 @@ class World:
 
     # renders the hud as well
     def update(self, screen, enemies: list[Enemy]):
+        self.time += 1
+        respawn = (self.time % self.FOOD_RESPAWN_TIME == 0)
         for chunk in self.get_render_chunks(screen):
-            chunk.update(screen, enemies)
+            chunk.update(screen, enemies, respawn)
             chunk.render_weapons(screen, self.player.camera)
         self.hud.render(self.player)
 
