@@ -8,6 +8,7 @@ from texture import Texture
 from weapon import Effect, Weapon
 from world import World
 from typing import Optional
+import time
 
 
 class Weapons:
@@ -28,11 +29,22 @@ class Weapons:
             4,
             Texture("textures/raygunpng.webp"),
         )
-        self.raygun.texture.scale = Vector2(0.2, 0.2)
+        self.raygun.texture.scale = Vector2(0.25, 0.25)
+
+        self.bazzoka = Weapon(
+            Vector2(0, 0),
+            Effect.ANNIHILATION,
+            3,
+            2,
+            Texture("textures/bazookapng.webp"),
+        )
+        self.bazzoka.texture.scale = Vector2(0.6, 0.6)
+        self.bazzoka.radius = 12
+        self.bazzoka.bullet_speed = 600
 
     def as_list(self) -> list[Weapon]:
         return [
-            self.glock, self.raygun
+            self.glock, self.raygun, self.bazzoka
         ]
 
     def find_equivalent_weapon(self, other: Weapon) -> Optional[Weapon]:
@@ -75,6 +87,7 @@ class Game:
 
         self.font = pygame.font.SysFont(None, 24)
         self._reset()
+        self.GameOverTexture = Texture("textures/GameOver.png")
 
     def _reset(self):
         self.zoom: float = 1
@@ -153,9 +166,11 @@ class Game:
             self._apply_player_weapon_effects()
         self._update_enemies()
         if len(self.player.blobs) <= 0:
+            self.screen.blit(self.GameOverTexture.data, (1280, 720))
+            time.sleep(3)
             self._reset()
             return
-
+        
         self.player.render(self.screen)
         # self.world.render_chunk_outlines(self.screen)
 

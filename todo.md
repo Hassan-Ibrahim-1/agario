@@ -27,16 +27,13 @@ Matthew
     - don't spawn enemies in player starting chunk
 
 Arthur
-    - add more weapons and effects
     - text that shows when a player can pickup a weapon
     - Audio
     - parasites
     - add a main menu background
 
--- Score counter
 -- Food absorb animation
 -- Special abilities and weapons
--- blobs grow individually
 -- enemies can consume food
 
 -- gameover mechanic

@@ -14,14 +14,17 @@ from typing import Optional
 class Effect(Enum):
     SLOW_DOWN = auto()
     DAMAGE = auto()
+    ANNIHILATION = auto()
 
     # how long in seconds the effect lasts for
     def duration(self) -> float:
         if self == Effect.SLOW_DOWN:
             return 0.5
-        else:
-            return 0
-
+        if self == Effect.DAMAGE:
+            return 0.1
+        if self == Effect.ANNIHILATION:
+            return 5
+        raise ValueError("Invalid effect")
     # meant to be applied to speed
     def slowdown_factor(self) -> float:
         assert self == Effect.SLOW_DOWN
@@ -29,10 +32,11 @@ class Effect(Enum):
 
 
 class Bullet:
-    def __init__(self, pos: Vector2, vel: Vector2, color: Color):
+    def __init__(self, pos: Vector2, vel: Vector2, color: Color, radius):
+        self.radius = radius
         self.position = pos
         self.velocity = vel
-        self.radius: int = 5
+        
         self.color = color
 
     def update(self, dt: float):
@@ -70,7 +74,7 @@ class Weapon:
         self.ammo = ammo
         self._timer = Timer()
         self._first_shot = True
-
+        self.radius: int = 5
     def look_at(
         self,
         screen,
@@ -123,6 +127,7 @@ class Weapon:
                 self.position.copy(),
                 self.bullet_speed * dir,
                 Color(252, 186, 3),
+                self.radius
             )
         )
 
@@ -143,13 +148,16 @@ class Weapon:
         del self.bullets[i]
 
     def copy(self) -> "Weapon":
-        return Weapon(
+        new = Weapon(
             self.position.copy(),
             self.effect,
             self.fire_rate,
             self.ammo,
             self.texture,
         )
+        new.radius = self.radius
+        new.bullet_speed = self.bullet_speed
+        return new
 
     # used for pick ups
     def collision_circle(self) -> CollisionCircle:
