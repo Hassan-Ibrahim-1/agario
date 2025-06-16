@@ -39,8 +39,8 @@ class Blob:
     ):
         speed += self._cohesion_force(center_of_mass)
         self.position += speed * dt
-        self.position.x = min(max(self.position.x,0),9000)
-        self.position.y = min(max(self.position.y,0),9000)
+        self.position.x = min(max(self.position.x, 0), 9000)
+        self.position.y = min(max(self.position.y, 0), 9000)
 
         for other in blobs:
             if other is self:
@@ -155,7 +155,7 @@ class Player:
     MAX_HEALTH = 100
     # should be an even number
     MAX_BLOBS = 6
-    # in ms
+    # in s
     SPLIT_COOLDOWN = 0.5
     SMALLEST_BLOB_REABSORBTION_TIME = 3600
     VIRUS_COOLDOWN = 240
@@ -262,7 +262,8 @@ class Player:
 
         if not moving:
             self.speed = Vector2(0, 0)
-            
+
+        # REABSORBTION
         new_smallest = 0
         current_min_size = math.inf
         for i in range(len(self.blobs)):
@@ -274,24 +275,26 @@ class Player:
         else:
             self.smallest_blob_timer = 0
             self.smallest_blob = new_smallest
-        
+
         if self.smallest_blob_timer > self.SMALLEST_BLOB_REABSORBTION_TIME:
-            self.blobs[(self.smallest_blob + 1) % len(self.blobs)].size += self.blobs[self.smallest_blob].size
+            self.blobs[(self.smallest_blob + 1) % len(self.blobs)].size += self.blobs[
+                self.smallest_blob
+            ].size
             self.blobs.pop(self.smallest_blob)
 
         self.size = 0
         for blob in self.blobs:
-           self.size += blob.size 
+            self.size += blob.size
 
-        scaled_speed = self.speed * (self.STARTING_SIZE / self.size)**0.5
+        scaled_speed = self.speed * (self.STARTING_SIZE / self.size) ** 0.5
 
         center_of_mass = self._calculate_center_of_mass()
         self.position.x = center_of_mass.x
         self.position.y = center_of_mass.y
-        
+
         for blob in self.blobs:
             blob.update(scaled_speed, dt, self.blobs, center_of_mass)
-        
+
         if self.weapon is not None:
             if self.weapon.ammo <= 0:
                 assert self.weapon_discard_callback is not None
@@ -323,7 +326,8 @@ class Player:
         self.weapon.render(screen, self.camera)
 
     def _split(self):
-        if len(self.blobs) >= self.MAX_BLOBS: return
+        if len(self.blobs) >= self.MAX_BLOBS:
+            return
         new_blobs: list[Blob] = []
         for blob in self.blobs:
             new_blob_count = len(new_blobs)

@@ -143,10 +143,19 @@ class Chunk:
 
 
 class World:
+<<<<<<< HEAD
+    CHUNKS_PER_AXIS = 5
+        # change to 9 after testing
+=======
     CHUNKS_PER_AXIS = 9
     FOOD_RESPAWN_TIME = 60
 
+<<<<<<< HEAD
     def __init__(self, screen, player: Player, controller=None) -> None:
+=======
+>>>>>>> 5eb7fd355416b6c30b89f9f70e736ac2379ad24f
+    def __init__(self, screen, player: Player) -> None:
+>>>>>>> 9f5ce80218e32a92a0e130c9e5bbd747eb40a907
         self.chunks: list[Chunk] = []
         self.player = player
         self.controller = controller

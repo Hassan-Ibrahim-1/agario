@@ -42,7 +42,10 @@ class Enemy:
                 if self._effect == Effect.SLOW_DOWN:
                     vel *= self._effect.slowdown_factor()
                 elif self._effect == Effect.DAMAGE:
-                    self.size -= 10
+                    self.size -= 5
+                    self._effect_duration -= dt
+                elif self._effect == Effect.ANNIHILATION:
+                    self.size -= 30
                 self._effect_duration -= dt
 
         v = dir.normalize() * vel * dt
@@ -55,4 +58,4 @@ class Enemy:
         self.size = (self.size**2 + food.radius**2) ** 0.5
 
     def eat_blob(self, blob: Blob):
-        self.size = (self.size**2 + blob.size**2) ** 0.5
+        self.size = (self.size**2 + blob.size**2) ** 0.6

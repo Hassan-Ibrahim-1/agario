@@ -11,6 +11,7 @@ from world import World
 from gamepad_controller import JoystickController
 from hud import Hud
 from typing import Optional
+import time
 
 
 class Weapons:
@@ -31,11 +32,22 @@ class Weapons:
             4,
             Texture("textures/raygunpng.webp"),
         )
-        self.raygun.texture.scale = Vector2(0.2, 0.2)
+        self.raygun.texture.scale = Vector2(0.25, 0.25)
+
+        self.bazzoka = Weapon(
+            Vector2(0, 0),
+            Effect.ANNIHILATION,
+            3,
+            2,
+            Texture("textures/bazookapng.webp"),
+        )
+        self.bazzoka.texture.scale = Vector2(0.6, 0.6)
+        self.bazzoka.radius = 12
+        self.bazzoka.bullet_speed = 600
 
     def as_list(self) -> list[Weapon]:
         return [
-            self.glock, self.raygun
+            self.glock, self.raygun, self.bazzoka
         ]
 
     def find_equivalent_weapon(self, other: Weapon) -> Optional[Weapon]:
@@ -78,6 +90,7 @@ class Game:
 
         self.font = pygame.font.SysFont(None, 24)
         self._reset()
+        self.GameOverTexture = Texture("textures/GameOver.png")
 
     def _reset(self):
         self.zoom: float = 1
