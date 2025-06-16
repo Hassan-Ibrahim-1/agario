@@ -33,7 +33,7 @@ class Enemy:
     def update(self, player_pos: Vector2, dt: float):
         dir = player_pos - self.position
 
-        vel = self.velocity * 50 / self.size # adjust this or make a constant if you'd like
+        vel = self.velocity * 50 / self.size 
         if self._effect is not None:
             if self._effect_duration <= 0:
                 self._effect = None

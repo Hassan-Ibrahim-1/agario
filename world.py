@@ -146,9 +146,10 @@ class World:
     CHUNKS_PER_AXIS = 9
     FOOD_RESPAWN_TIME = 60
 
-    def __init__(self, screen, player: Player) -> None:
+    def __init__(self, screen, player: Player, controller=None) -> None:
         self.chunks: list[Chunk] = []
         self.player = player
+        self.controller = controller
         self.hud = Hud(screen)
         self.time = 0
 
@@ -172,10 +173,9 @@ class World:
         for chunk in self.get_render_chunks(screen):
             chunk.update(screen, enemies, respawn)
             chunk.render_weapons(screen, self.player.camera)
-        self.hud.render(self.player)
+        self.hud.render(self.player, self.controller)
 
-    # get the chunk that the player is in and the 9 surrounding chunks
-    # the first element is always the chunk that the player is currently in
+    
     def get_render_chunks(self, screen) -> list[Chunk]:
         chunks = []
         for chunk in self.chunks:
@@ -221,7 +221,7 @@ class World:
                 chunk.width * self.player.camera.zoom,
                 chunk.height * self.player.camera.zoom,
             )
-            # print(f"pos {pos} width {chunk.width} height {chunk.height}")
+            
             pygame.draw.rect(
                 screen,
                 "green",
@@ -241,3 +241,15 @@ class World:
 
     def random_chunk(self) -> Chunk:
         return random.choice(self.chunks)
+
+    def render_food(self, screen, camera, player=None):
+        original_player = self.player
+        if player:
+            self.player = player
+        
+        chunks = self.get_render_chunks(screen)
+        for chunk in chunks:
+            for food in chunk.food:
+                food.render(screen, camera)
+        
+        self.player = original_player

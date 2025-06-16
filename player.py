@@ -190,33 +190,66 @@ class Player:
             )
         ]
 
-    def update(self, screen, keys: ScancodeWrapper, dt: float):
+    def update(self, screen, keys: ScancodeWrapper, dt: float, controller=None, use_arrow_keys=False):
         self.frames_since_last_virus += 1
         
         moving = False
-        if keys[pygame.K_w]:
-            self.speed.y -= self.acceleration * dt
-            moving = True
-        if keys[pygame.K_s]:
-            self.speed.y += self.acceleration * dt
-            moving = True
-        if keys[pygame.K_a]:
-            self.speed.x -= self.acceleration * dt
-            moving = True
-        if keys[pygame.K_d]:
-            self.speed.x += self.acceleration * dt
-            moving = True
+        
+        if keys is not None:
+            if use_arrow_keys:
+                if keys[pygame.K_UP]:
+                    self.speed.y -= self.acceleration * dt
+                    moving = True
+                if keys[pygame.K_DOWN]:
+                    self.speed.y += self.acceleration * dt
+                    moving = True
+                if keys[pygame.K_LEFT]:
+                    self.speed.x -= self.acceleration * dt
+                    moving = True
+                if keys[pygame.K_RIGHT]:
+                    self.speed.x += self.acceleration * dt
+                    moving = True
+            else:
+                if keys[pygame.K_w]:
+                    self.speed.y -= self.acceleration * dt
+                    moving = True
+                if keys[pygame.K_s]:
+                    self.speed.y += self.acceleration * dt
+                    moving = True
+                if keys[pygame.K_a]:
+                    self.speed.x -= self.acceleration * dt
+                    moving = True
+                if keys[pygame.K_d]:
+                    self.speed.x += self.acceleration * dt
+                    moving = True
+
+        if controller and controller.is_connected():
+            movement_vector = controller.get_movement_vector()
+            if movement_vector.length() > 0:
+                self.speed.x += movement_vector.x * self.acceleration * dt
+                self.speed.y += movement_vector.y * self.acceleration * dt
+                moving = True
 
         if self.weapon is None:
-            self.can_pickup_weapon = keys[pygame.K_e]
+            if use_arrow_keys:
+                keyboard_pickup = keys is not None and keys[pygame.K_RSHIFT]
+            else:
+                keyboard_pickup = keys is not None and keys[pygame.K_e]
+            controller_pickup = controller and controller.is_weapon_pickup_pressed()
+            self.can_pickup_weapon = keyboard_pickup or controller_pickup
 
-        if keys[pygame.K_SPACE]:
+        if use_arrow_keys:
+            keyboard_split = keys is not None and keys[pygame.K_RETURN]
+        else:
+            keyboard_split = keys is not None and keys[pygame.K_SPACE]
+        controller_split = controller and controller.is_split_pressed()
+        split_pressed = keyboard_split or controller_split
+        if split_pressed:
             current_time = time.time()
             if self.last_split + self.SPLIT_COOLDOWN < current_time:
                 self.last_split = current_time
                 self._split()
 
-        # clamp values
         max_speed = self.MAX_SPEED / (self.size**0.5)
         if self.speed.x > max_speed:
             self.speed.x = max_speed
@@ -230,7 +263,6 @@ class Player:
         if not moving:
             self.speed = Vector2(0, 0)
             
-        # REABSORBTION
         new_smallest = 0
         current_min_size = math.inf
         for i in range(len(self.blobs)):
